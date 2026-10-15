@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { WORDS } from '../data/hsk1.js'
 import { makeRound, shuffle } from '../lib/rounds.js'
 import { AppStateContext } from './context.js'
@@ -10,19 +10,33 @@ export function AppStateProvider({ children }) {
   const [matched, setMatched] = useState(() => new Set())   // ids of matched words
   const [round, setRound] = useState(null)            // { ids, left, right } — the 6 words on screen + column orders
 
-  // Sign in and start a fresh game.
-  const signIn = useCallback((nextUser) => {
+  // Latest words/matched for callbacks created earlier (e.g. a toast button) so they never read stale state.
+  const latest = useRef({ words: [], matched: new Set() })
+  useEffect(() => { latest.current = { words, matched } }, [words, matched])
+
+  // Start (or restart) a fresh game: reshuffle all words, clear progress, deal the first set.
+  const restart = useCallback(() => {
     const shuffled = shuffle(WORDS)
     const none = new Set()
-    setUser(nextUser)
     setWords(shuffled)
     setMatched(none)
     setRound(makeRound(shuffled, none))
   }, [])
 
+  const signIn = useCallback((nextUser) => {
+    setUser(nextUser)
+    restart()
+  }, [restart])
+
+  // Deal the next set of unmatched words.
+  const nextRound = useCallback(() => {
+    const { words: w, matched: m } = latest.current
+    setRound(makeRound(w, m))
+  }, [])
+
   const value = useMemo(
-    () => ({ user, signIn, words, matched, setMatched, round, setRound, total: WORDS.length }),
-    [user, signIn, words, matched, round],
+    () => ({ user, signIn, restart, nextRound, words, matched, setMatched, round, total: WORDS.length }),
+    [user, signIn, restart, nextRound, words, matched, round],
   )
   return <AppStateContext.Provider value={value}>{children}</AppStateContext.Provider>
 }

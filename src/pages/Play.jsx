@@ -9,12 +9,13 @@ const BURST_MS = 1100  // explosion length (matches the 1.05s card-pop animation
 const SHAKE_MS = 450   // wrong-match shake length
 
 export default function Play() {
-  const { round, matched, setMatched } = useAppState()
+  const { round, matched, setMatched, total, restart, nextRound } = useAppState()
   const toast = useToast()
   const [selected, setSelected] = useState(null)   // { kind: 'hanzi' | 'pinyin', id } | null
   const [anim, setAnim] = useState({})             // `${kind}:${id}` -> 'burst' | 'wrong'
   const [locked, setLocked] = useState(false)      // input is blocked while a wrong-match shake plays
   const timers = useRef(new Set())
+  const announced = useRef(null)               // the round we've already congratulated
 
   useEffect(() => {
     const pending = timers.current
@@ -30,6 +31,20 @@ export default function Play() {
     keys.forEach((k) => { if (value) next[k] = value; else delete next[k] })
     return next
   })
+
+  // When every card in the set is matched (and the last explosion has finished), congratulate.
+  // The toast stays until clicked: "Continue" deals the next set; after the final set it offers "Play again".
+  const bursting = Object.values(anim).includes('burst')
+  const roundDone = round.ids.every((id) => matched.has(id))
+  useEffect(() => {
+    if (!roundDone || bursting || announced.current === round) return
+    announced.current = round
+    if (matched.size >= total) {
+      toast.congrats({ heading: 'Congratulations!', message: `You matched all ${total} HSK 1 words.`, actionLabel: 'Play again', onAction: restart })
+    } else {
+      toast.congrats({ heading: 'Congratulations!', message: `You matched all ${round.ids.length} words in this set.`, actionLabel: 'Continue', onAction: nextRound })
+    }
+  }, [roundDone, bursting, round, matched.size, total, toast, restart, nextRound])
 
   function evaluate(hanziId, pinyinId) {
     const keys = [`hanzi:${hanziId}`, `pinyin:${pinyinId}`]
