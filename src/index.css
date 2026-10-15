@@ -44,10 +44,32 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .btn:disabled { opacity: 0.4; cursor: not-allowed; }
 .btn-primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); font-weight: 600; }
 
-/* Phase 0 font check */
-.fontcheck { margin: 24px auto; padding: 24px; max-width: 560px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); }
-.hanzi-sample { margin: 0 0 8px; font-family: 'Noto Serif SC', serif; font-weight: 700; font-size: 2.5rem; letter-spacing: 0.1em; }
-.pinyin-sample { margin: 4px 0; font-size: 1.375rem; }
+/* Welcome */
+.welcome { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; padding: 48px 24px; text-align: center; }
+.welcome > * { animation: rise 320ms var(--ease) both; }
+.welcome > :nth-child(2) { animation-delay: 40ms; } .welcome > :nth-child(3) { animation-delay: 80ms; } .welcome > :nth-child(4) { animation-delay: 120ms; }
+.welcome h1 { font-size: clamp(2rem, 4vw, 3rem); margin: 0; }
+.welcome-sub { margin: 0; color: var(--muted); font-size: 1.125rem; max-width: 36ch; text-wrap: balance; }
+.seal {
+  display: grid; place-items: center; width: 64px; height: 64px; border-radius: 10px; background: var(--accent); color: #fff;
+  font-family: 'Noto Serif SC', serif; font-weight: 700; font-size: 2rem; transform: rotate(-4deg); box-shadow: 0 6px 18px rgb(200 69 45 / 0.28);
+}
+.card-form {
+  width: min(420px, 100%); margin-top: 16px; padding: 28px; display: grid; gap: 16px; text-align: left;
+  background: var(--surface); border: 1px solid var(--border); border-radius: 16px; box-shadow: 0 1px 0 rgb(255 255 255 / 0.6) inset, 0 10px 30px rgb(60 45 20 / 0.08);
+}
+.field { display: grid; gap: 4px; }
+.field > label { font-size: 0.875rem; font-weight: 500; }
+.field input {
+  min-height: 44px; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border); background: #fff; color: var(--ink); font: inherit; width: 100%;
+  transition: border-color 150ms, box-shadow 150ms;
+}
+.field input:focus-visible { border-color: var(--accent); box-shadow: 0 0 0 3px rgb(200 69 45 / 0.15); outline: none; }
+.field input[aria-invalid='true'] { border-color: var(--wrong); }
+.error { color: var(--wrong); min-height: 1.3em; font-size: 0.875rem; }
+.card-form .btn { width: 100%; margin-top: 4px; }
+
+@keyframes rise { from { opacity: 0; transform: translateY(10px); } }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
