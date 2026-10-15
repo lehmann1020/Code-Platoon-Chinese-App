@@ -19,7 +19,7 @@ npm run check:rounds # simulates 200 full games to check the set-dealing rules
 2. Six hanzi (left) and six pinyin (right) appear, each column shuffled. Click one card, then its partner in the other column. Either order works.
 3. **Correct:** both cards explode and a toast shows the definition. **Wrong:** both cards turn red and shake.
 4. Match all six to get a **Congratulations** toast; **Continue** deals the next set. The tracker at the bottom shows matched / total.
-5. After the last set, **Play again** reshuffles and resets.
+5. After the last set, a toast says "Congratulations! You've learned all 149 HSK 1 words!"; **Play again** reshuffles and resets.
 
 Keyboard: Tab to a card, Enter or Space to select. Focus moves to the first card of each new set. `prefers-reduced-motion` swaps the shake and explosion for a colour flash.
 

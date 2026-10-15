@@ -30,7 +30,7 @@ As a learner, I match each Chinese character to its pinyin, six words at a time,
 - [ ] **Wrong:** both cards turn red and shake ~450ms, then return to normal unselected; the tracker does not change; input is blocked briefly during the shake
 - [ ] When the 6th pair of a set is matched, a "Congratulations!" toast with a **Continue** button appears (stays until clicked; Continue is focused)
 - [ ] Clicking Continue loads the next set of up to 6 unmatched words (staggered entrance)
-- [ ] The final set may have fewer than 6 cards; after it is matched the toast says HSK 1 is complete and offers **Play again** (resets progress and reshuffles)
+- [ ] The final set may have fewer than 6 cards; after it is matched the toast says "Congratulations! You've learned all N HSK 1 words!" and offers **Play again** (resets progress and reshuffles)
 - [ ] No two words in a set share the same pinyin
 - [ ] Tracker pinned at the bottom shows `matched / total` where total = number of words in the HSK 1 data file; the bar fills proportionally; `aria` progressbar semantics
 - [ ] Header shows the learner's name

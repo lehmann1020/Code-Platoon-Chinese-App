@@ -45,7 +45,7 @@ export default function Play() {
     if (!roundDone || bursting || announced.current === round) return
     announced.current = round
     if (matched.size >= total) {
-      toast.congrats({ heading: 'Congratulations!', message: `You matched all ${total} HSK 1 words.`, actionLabel: 'Play again', onAction: restart })
+      toast.congrats({ heading: 'Congratulations!', message: `You've learned all ${total} HSK 1 words!`, actionLabel: 'Play again', onAction: restart })
     } else {
       toast.congrats({ heading: 'Congratulations!', message: `You matched all ${round.ids.length} words in this set.`, actionLabel: 'Continue', onAction: nextRound })
     }
