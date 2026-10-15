@@ -160,3 +160,6 @@ export const WORDS = RAW.map(([hanzi, pinyin, english], i) => ({
 }))
 
 export const TOTAL_WORDS = WORDS.length
+
+const BY_ID = new Map(WORDS.map((w) => [w.id, w]))
+export const getWord = (id) => BY_ID.get(id)

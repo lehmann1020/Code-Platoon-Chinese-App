@@ -15,7 +15,7 @@ function validate({ name, email }) {
 }
 
 export default function Welcome() {
-  const { setUser } = useAppState()
+  const { signIn } = useAppState()
   const navigate = useNavigate()
   const [values, setValues] = useState({ name: '', email: '' })
   const [touched, setTouched] = useState({})
@@ -31,7 +31,7 @@ export default function Welcome() {
     e.preventDefault()
     setTouched({ name: true, email: true })
     if (!valid) return
-    setUser({ name: values.name.trim(), email: values.email.trim() })   // memory only; a refresh clears it
+    signIn({ name: values.name.trim(), email: values.email.trim() })   // memory only; a refresh clears it
     navigate('/play')
   }
 

@@ -69,6 +69,39 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .error { color: var(--wrong); min-height: 1.3em; font-size: 0.875rem; }
 .card-form .btn { width: 100%; margin-top: 4px; }
 
+/* Board */
+.board-page { max-width: 960px; margin: 0 auto; padding: 8px 24px 96px; }
+.board { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; }
+.column { display: flex; flex-direction: column; gap: 12px; }
+.column-title { margin: 0 0 2px; font-family: Inter, sans-serif; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); text-align: center; }
+
+.match-card {
+  height: clamp(64px, 10.5vh, 88px); display: grid; place-items: center; width: 100%;
+  background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius);
+  box-shadow: 0 1px 0 rgb(255 255 255 / 0.7) inset, 0 2px 6px rgb(60 45 20 / 0.06);
+  color: var(--ink); animation: card-in 300ms var(--ease) both; animation-delay: calc(var(--i, 0) * 40ms);
+  transition: transform 150ms var(--ease), border-color 150ms, box-shadow 150ms, background 150ms;
+}
+.match-card.hanzi { font-family: 'Noto Serif SC', serif; font-weight: 700; font-size: clamp(32px, 5vh, 44px); }
+.match-card.pinyin { font-size: clamp(18px, 2.8vh, 24px); font-weight: 500; }
+.match-card:hover { transform: translateY(-2px); border-color: var(--muted); box-shadow: 0 6px 14px rgb(60 45 20 / 0.12); }
+.match-card.selected {
+  border-color: var(--accent); background: #fff6f3; transform: scale(1.02);
+  box-shadow: 0 0 0 3px rgb(200 69 45 / 0.22), 0 6px 14px rgb(200 69 45 / 0.14);
+}
+@keyframes card-in { from { opacity: 0; transform: translateY(8px); } }
+
+.debug { text-align: center; color: var(--muted); font-size: 0.875rem; margin-top: 16px; }
+
+/* Tracker */
+.tracker { position: fixed; left: 0; right: 0; bottom: 0; height: 64px; background: var(--surface); border-top: 1px solid var(--border); box-shadow: 0 -6px 18px rgb(60 45 20 / 0.06); }
+.tracker-inner { max-width: 960px; height: 100%; margin: 0 auto; padding: 0 24px; display: flex; align-items: center; gap: 20px; }
+.tracker-count { margin: 0; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.tracker-count strong { font-size: 1.25rem; }
+.tracker-label { color: var(--muted); font-size: 0.875rem; margin-right: 4px; }
+.tracker-bar { flex: 1; height: 10px; border-radius: 999px; background: var(--raised); overflow: hidden; }
+.tracker-fill { height: 100%; border-radius: 999px; background: var(--accent); transition: width 400ms var(--ease); }
+
 @keyframes rise { from { opacity: 0; transform: translateY(10px); } }
 
 @media (prefers-reduced-motion: reduce) {
