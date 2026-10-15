@@ -1,5 +1,8 @@
 # Hanzi Match — Build Phases
 
+**Status:** all phases (0–6) built and approved.
+The word list ended at 149 words (火车站 removed), so there are 25 sets (24 of 6, one of 5).
+
 Each phase ends with Playwright/DevTools verification and **your approval**. After approval: commit (message names the phase), push after the first-push confirmation.
 Desktop only. Evidence (screenshots) goes in `.playwright-mcp/` (git-ignored).
 

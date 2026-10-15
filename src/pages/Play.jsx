@@ -15,12 +15,17 @@ export default function Play() {
   const [anim, setAnim] = useState({})             // `${kind}:${id}` -> 'burst' | 'wrong'
   const [locked, setLocked] = useState(false)      // input is blocked while a wrong-match shake plays
   const timers = useRef(new Set())
+  const boardRef = useRef(null)
   const announced = useRef(null)               // the round we've already congratulated
 
   useEffect(() => {
     const pending = timers.current
     return () => { pending.forEach(clearTimeout); pending.clear() }
   }, [])
+  // Keyboard users: put focus on the first card whenever a new set arrives (including the first set and after "Play again").
+  const focusFirstCard = () => requestAnimationFrame(() => boardRef.current?.querySelector('.match-card:not([aria-disabled="true"])')?.focus({ preventScroll: true }))
+  useEffect(() => { focusFirstCard() }, [round])
+
   const later = (fn, ms) => {
     const t = setTimeout(() => { timers.current.delete(t); fn() }, ms)
     timers.current.add(t)
@@ -52,7 +57,13 @@ export default function Play() {
       setMatched((prev) => new Set(prev).add(hanziId))
       setAnimFor(keys, 'burst')
       toast.definition(getWord(hanziId))
-      later(() => setAnimFor(keys, null), BURST_MS)
+      // After the explosion the matched cards unmount; if that dropped keyboard focus, move it to the next card.
+      later(() => {
+        setAnimFor(keys, null)
+        requestAnimationFrame(() => {
+          if (!document.activeElement || document.activeElement === document.body) focusFirstCard()
+        })
+      }, BURST_MS)
     } else {                                            // wrong: red + shake, then reset
       setLocked(true)
       setAnimFor(keys, 'wrong')
@@ -87,7 +98,7 @@ export default function Play() {
 
   return (
     <>
-      <main className="board-page">
+      <main className="board-page" ref={boardRef}>
         <div className="board">
           <section className="column" aria-label="Hanzi">
             <h2 className="column-title">Hanzi</h2>

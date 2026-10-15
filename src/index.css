@@ -96,7 +96,7 @@ button { font: inherit; color: inherit; cursor: pointer; }
 
 /* Match feedback */
 .match-card { position: relative; overflow: visible; }
-.match-card:disabled { cursor: default; }
+.match-card[aria-disabled='true'] { cursor: default; }
 .match-card.wrong {
   background: var(--wrong-tint); border-color: var(--wrong); color: var(--wrong);
   box-shadow: 0 0 0 3px rgb(216 55 43 / 0.18);

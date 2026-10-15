@@ -29,7 +29,7 @@ export default function MatchCard({ kind, word, selected, state, onSelect, index
       className={`match-card ${kind}${selected ? ' selected' : ''}${state ? ` ${state}` : ''}`}
       aria-pressed={selected}
       aria-label={`${kind === 'hanzi' ? 'Hanzi' : 'Pinyin'}: ${text}`}
-      disabled={!!state}
+      aria-disabled={!!state || undefined}
       style={{ '--i': index }}
       onClick={() => onSelect(kind, word.id)}
     >
