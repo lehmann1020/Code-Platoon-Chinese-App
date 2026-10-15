@@ -8,6 +8,8 @@
   --border: #ddd4c3;
   --accent: #c8452d;       /* vermilion seal */
   --accent-ink: #ffffff;
+  --select: #2f6fdb;       /* blue: selected card, focus ring, progress — red is reserved for WRONG matches */
+  --select-tint: #eef4ff;
   --correct: #2f7d5b;      /* jade */
   --wrong: #d8372b;
   --wrong-tint: #ffe9e6;
@@ -21,7 +23,7 @@
 body { margin: 0; background: var(--paper); color: var(--ink); min-height: 100vh; }
 h1, h2 { font-family: 'Space Grotesk', Inter, system-ui, sans-serif; line-height: 1.15; margin: 0 0 12px; }
 button { font: inherit; color: inherit; cursor: pointer; }
-:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+:focus-visible { outline: 2px solid var(--select); outline-offset: 2px; }
 .muted { color: var(--muted); }
 
 .page { max-width: 960px; margin: 0 auto; padding: 32px 24px; }
@@ -64,7 +66,7 @@ button { font: inherit; color: inherit; cursor: pointer; }
   min-height: 44px; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border); background: #fff; color: var(--ink); font: inherit; width: 100%;
   transition: border-color 150ms, box-shadow 150ms;
 }
-.field input:focus-visible { border-color: var(--accent); box-shadow: 0 0 0 3px rgb(200 69 45 / 0.15); outline: none; }
+.field input:focus-visible { border-color: var(--select); box-shadow: 0 0 0 3px rgb(47 111 219 / 0.18); outline: none; }
 .field input[aria-invalid='true'] { border-color: var(--wrong); }
 .error { color: var(--wrong); min-height: 1.3em; font-size: 0.875rem; }
 .card-form .btn { width: 100%; margin-top: 4px; }
@@ -86,12 +88,53 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .match-card.pinyin { font-size: clamp(18px, 2.8vh, 24px); font-weight: 500; }
 .match-card:hover { transform: translateY(-2px); border-color: var(--muted); box-shadow: 0 6px 14px rgb(60 45 20 / 0.12); }
 .match-card.selected {
-  border-color: var(--accent); background: #fff6f3; transform: scale(1.02);
-  box-shadow: 0 0 0 3px rgb(200 69 45 / 0.22), 0 6px 14px rgb(200 69 45 / 0.14);
+  border-color: var(--select); background: var(--select-tint); transform: scale(1.02);
+  box-shadow: 0 0 0 3px rgb(47 111 219 / 0.22), 0 6px 14px rgb(47 111 219 / 0.14);
 }
 @keyframes card-in { from { opacity: 0; transform: translateY(8px); } }
 
-.debug { text-align: center; color: var(--muted); font-size: 0.875rem; margin-top: 16px; }
+
+/* Match feedback */
+.match-card { position: relative; overflow: visible; }
+.match-card:disabled { cursor: default; }
+.match-card.wrong {
+  background: var(--wrong-tint); border-color: var(--wrong); color: var(--wrong);
+  box-shadow: 0 0 0 3px rgb(216 55 43 / 0.18);
+  animation: shake 450ms cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+@keyframes shake { 10%, 90% { transform: translateX(-2px); } 20%, 80% { transform: translateX(4px); } 30%, 50%, 70% { transform: translateX(-7px); } 40%, 60% { transform: translateX(7px); } }
+.match-card.burst { border-color: var(--correct); animation: card-pop 1050ms var(--ease) both; z-index: 2; }
+.match-card.burst .card-text { animation: text-out 420ms ease-out both; }
+@keyframes card-pop { 0% { transform: scale(1); opacity: 1; } 20% { transform: scale(1.08); opacity: 1; background: #eaf6ef; } 60% { transform: scale(1.04); opacity: 0.9; background: #eaf6ef; } 100% { transform: scale(0.6); opacity: 0; } }
+@keyframes text-out { to { opacity: 0; transform: scale(1.3); } }
+.particles { position: absolute; inset: 0; pointer-events: none; }
+.particles i {
+  position: absolute; left: 50%; top: 50%; width: var(--s); height: var(--s); margin: calc(var(--s) / -2) 0 0 calc(var(--s) / -2);
+  border-radius: 50%; background: var(--c); opacity: 0; animation: particle 1000ms cubic-bezier(0.15, 0.7, 0.3, 1) both; animation-delay: var(--d);
+}
+@keyframes particle { 0% { opacity: 1; transform: translate(0, 0) scale(1); } 70% { opacity: 1; } 100% { opacity: 0; transform: translate(var(--dx), var(--dy)) scale(0.2); } }
+
+/* Toasts */
+.toast-region { position: fixed; top: 64px; left: 50%; transform: translateX(-50%); z-index: 50; display: flex; flex-direction: column; align-items: center; gap: 8px; pointer-events: none; }
+.toast {
+  pointer-events: auto; display: flex; align-items: center; gap: 14px; min-width: 260px; padding: 12px 18px 12px 16px;
+  background: var(--surface); border: 1px solid var(--border); border-left: 4px solid var(--correct); border-radius: 12px;
+  box-shadow: 0 10px 28px rgb(60 45 20 / 0.16); animation: toast-in 220ms var(--ease) both;
+}
+.toast.leaving { animation: toast-out 160ms ease-in both; }
+.toast-hanzi { font-family: 'Noto Serif SC', serif; font-weight: 700; font-size: 1.75rem; line-height: 1; }
+.toast-text { display: flex; flex-direction: column; }
+.toast-pinyin { font-weight: 600; }
+.toast-english { color: var(--muted); font-size: 0.9375rem; }
+@keyframes toast-in { from { opacity: 0; transform: translateY(-10px); } }
+@keyframes toast-out { to { opacity: 0; transform: translateY(-6px); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .match-card.wrong { animation: none; }                       /* no shake: the red fill alone signals it */
+  .match-card.burst { animation: none; background: #eaf6ef; border-color: var(--correct); }   /* color flash instead of explosion */
+  .match-card.burst .card-text { animation: none; }
+  .particles { display: none; }
+}
 
 /* Tracker */
 .tracker { position: fixed; left: 0; right: 0; bottom: 0; height: 64px; background: var(--surface); border-top: 1px solid var(--border); box-shadow: 0 -6px 18px rgb(60 45 20 / 0.06); }
@@ -100,7 +143,7 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .tracker-count strong { font-size: 1.25rem; }
 .tracker-label { color: var(--muted); font-size: 0.875rem; margin-right: 4px; }
 .tracker-bar { flex: 1; height: 10px; border-radius: 999px; background: var(--raised); overflow: hidden; }
-.tracker-fill { height: 100%; border-radius: 999px; background: var(--accent); transition: width 400ms var(--ease); }
+.tracker-fill { height: 100%; border-radius: 999px; background: var(--select); transition: width 400ms var(--ease); }
 
 @keyframes rise { from { opacity: 0; transform: translateY(10px); } }
 

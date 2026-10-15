@@ -5,7 +5,9 @@
 ## Color (CSS variables)
 - Background (paper) `#F6F1E7`; surface (card) `#FFFDF8`; raised/hover `#EFE8DA`
 - Text (ink) `#1D1B19`; muted `#6F695F`; border `#DDD4C3`
-- Accent (vermilion seal) `#C8452D` for primary buttons, selection ring, tracker fill
+- Accent (vermilion seal) `#C8452D` for the brand seal and the primary button only
+- Select (blue) `#2F6FDB` with tint `#EEF4FF` for the selected card, the focus ring and the tracker fill
+- **Red is reserved for wrong matches** — never used for selection, progress or particles
 - Correct (jade) `#2F7D5B` for the explosion particles and success toast accent
 - Wrong (red) `#D8372B` background tint with `#FFE9E6` card fill during the shake
 - Contrast: body text >= 4.5:1; selected/wrong/correct are never shown by color alone (selected has a thick ring, wrong shakes, correct bursts)
@@ -25,7 +27,7 @@
 ## Motion
 - Card hover: lift 2px + border color change, 150ms ease-out
 - Select: accent ring + slight scale 1.02, 150ms
-- **Explode (correct):** 14–18 particles per card burst outward with fade, ~600ms, then the card slot is empty; jade/vermilion/gold mix
+- **Explode (correct):** 16 particles per card burst outward with fade over ~1s (card pops, flashes green, fades), then the card slot is empty; jade/blue/gold/ink mix (no red)
 - **Shake (wrong):** cards fill red and shake horizontally +-6px, 3 cycles, ~450ms, then reset
 - Toast in: slide down + fade 220ms; out: 160ms
 - New set: cards fade/slide in with a 40ms stagger
@@ -36,7 +38,7 @@
 - Toast: definition toast (hanzi + pinyin + English), congratulations toast (heading + Continue button)
 - Primary button: vermilion fill, white text, 44px tall, radius 10px
 - Inputs: 44px tall, 1px border, visible focus ring, inline error text
-- Focus ring: 2px vermilion outline, always visible
+- Focus ring: 2px blue outline, always visible
 
 ## Accessibility
 - Cards are real `<button>`s with `aria-pressed` for selected state and an accessible name ("Hanzi: 你好" / "Pinyin: nǐ hǎo")

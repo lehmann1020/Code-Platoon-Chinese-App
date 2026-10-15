@@ -1,28 +1,74 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import MatchCard from '../components/MatchCard.jsx'
 import Tracker from '../components/Tracker.jsx'
 import { getWord } from '../data/hsk1.js'
 import { useAppState } from '../state/useAppState.js'
+import { useToast } from '../toast/useToast.js'
+
+const BURST_MS = 1100  // explosion length (matches the 1.05s card-pop animation)
+const SHAKE_MS = 450   // wrong-match shake length
 
 export default function Play() {
-  const { round, matched } = useAppState()
-  const [selected, setSelected] = useState(null)        // { kind: 'hanzi' | 'pinyin', id } | null
-  const [lastPair, setLastPair] = useState(null)        // Phase 3 debug only: proves the pair hook fires. Removed in Phase 4.
+  const { round, matched, setMatched } = useAppState()
+  const toast = useToast()
+  const [selected, setSelected] = useState(null)   // { kind: 'hanzi' | 'pinyin', id } | null
+  const [anim, setAnim] = useState({})             // `${kind}:${id}` -> 'burst' | 'wrong'
+  const [locked, setLocked] = useState(false)      // input is blocked while a wrong-match shake plays
+  const timers = useRef(new Set())
 
-  // Selection rules: click selects; click again deselects; another card in the SAME column moves the
-  // selection; a card in the OTHER column makes a pair (order doesn't matter).
-  function handleSelect(kind, id) {
-    if (!selected) return setSelected({ kind, id })
-    if (selected.kind === kind) return setSelected(selected.id === id ? null : { kind, id })
-    const hanziId = kind === 'hanzi' ? id : selected.id
-    const pinyinId = kind === 'pinyin' ? id : selected.id
-    setSelected(null)
-    setLastPair({ hanziId, pinyinId })                  // Phase 4 replaces this with real evaluation
+  useEffect(() => {
+    const pending = timers.current
+    return () => { pending.forEach(clearTimeout); pending.clear() }
+  }, [])
+  const later = (fn, ms) => {
+    const t = setTimeout(() => { timers.current.delete(t); fn() }, ms)
+    timers.current.add(t)
   }
 
-  const column = (kind, ids) => ids.filter((id) => !matched.has(id)).map((id, i) => (
-    <MatchCard key={id} kind={kind} word={getWord(id)} index={i} selected={selected?.kind === kind && selected.id === id} onSelect={handleSelect} />
-  ))
+  const setAnimFor = (keys, value) => setAnim((prev) => {
+    const next = { ...prev }
+    keys.forEach((k) => { if (value) next[k] = value; else delete next[k] })
+    return next
+  })
+
+  function evaluate(hanziId, pinyinId) {
+    const keys = [`hanzi:${hanziId}`, `pinyin:${pinyinId}`]
+    if (hanziId === pinyinId) {                         // correct: explode, show the definition, count it
+      setMatched((prev) => new Set(prev).add(hanziId))
+      setAnimFor(keys, 'burst')
+      toast.definition(getWord(hanziId))
+      later(() => setAnimFor(keys, null), BURST_MS)
+    } else {                                            // wrong: red + shake, then reset
+      setLocked(true)
+      setAnimFor(keys, 'wrong')
+      later(() => { setAnimFor(keys, null); setLocked(false) }, SHAKE_MS)
+    }
+  }
+
+  // Click selects; click again deselects; another card in the SAME column moves the selection;
+  // a card in the OTHER column makes a pair (order doesn't matter).
+  function handleSelect(kind, id) {
+    if (locked || anim[`${kind}:${id}`]) return
+    if (!selected) return setSelected({ kind, id })
+    if (selected.kind === kind) return setSelected(selected.id === id ? null : { kind, id })
+    setSelected(null)
+    evaluate(kind === 'hanzi' ? id : selected.id, kind === 'pinyin' ? id : selected.id)
+  }
+
+  // A matched card stays on screen only while its explosion plays.
+  const column = (kind, ids) => ids
+    .filter((id) => !matched.has(id) || anim[`${kind}:${id}`] === 'burst')
+    .map((id, i) => (
+      <MatchCard
+        key={id}
+        kind={kind}
+        word={getWord(id)}
+        index={i}
+        state={anim[`${kind}:${id}`]}
+        selected={selected?.kind === kind && selected.id === id}
+        onSelect={handleSelect}
+      />
+    ))
 
   return (
     <>
@@ -37,11 +83,6 @@ export default function Play() {
             {column('pinyin', round.right)}
           </section>
         </div>
-        {lastPair && (
-          <p className="debug" data-testid="last-pair">
-            Phase 3 debug: paired {getWord(lastPair.hanziId).hanzi} with {getWord(lastPair.pinyinId).pinyin}
-          </p>
-        )}
       </main>
       <Tracker />
     </>
