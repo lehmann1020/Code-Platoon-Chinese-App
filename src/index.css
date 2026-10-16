@@ -34,6 +34,7 @@ button { font: inherit; color: inherit; cursor: pointer; }
   max-width: 960px; margin: 0 auto; padding: 16px 24px;
 }
 .greeting { margin: 0; color: var(--muted); }
+.level-label { margin: 0; color: var(--muted); text-align: right; }
 .wordmark { margin: 0; font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 1.25rem; }
 
 .btn {

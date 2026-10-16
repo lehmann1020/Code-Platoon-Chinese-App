@@ -34,8 +34,15 @@ export function arrangeColumns(ids) {
   return { left, right }
 }
 
-// A whole round: the set of words plus the two column orders.
+// The level being played: the lowest level that still has an unmatched word (undefined when all are matched).
+export function currentLevel(words, matched) {
+  const open = words.filter((w) => !matched.has(w.id))
+  return open.length ? Math.min(...open.map((w) => w.level)) : undefined
+}
+
+// A whole round: a set from the current level only, plus the two column orders.
 export function makeRound(words, matched) {
-  const set = dealSet(words, matched)
-  return { ids: set.map((w) => w.id), ...arrangeColumns(set.map((w) => w.id)) }
+  const level = currentLevel(words, matched)
+  const set = dealSet(words.filter((w) => w.level === level), matched)
+  return { level, ids: set.map((w) => w.id), ...arrangeColumns(set.map((w) => w.id)) }
 }

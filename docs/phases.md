@@ -1,6 +1,6 @@
 # Hanzi Match — Build Phases
 
-**Status:** all phases (0–6) built and approved.
+**Status:** all phases (0–8) built and approved.
 The word list ended at 149 words (火车站 removed), so there are 25 sets (24 of 6, one of 5).
 
 Each phase ends with Playwright/DevTools verification and **your approval**. After approval: commit (message names the phase), push after the first-push confirmation.
@@ -15,6 +15,8 @@ Desktop only. Evidence (screenshots) goes in `.playwright-mcp/` (git-ignored).
 | 4 | Match feedback | Correct: card explosion + definition toast + tracker +1. Wrong: red + shake, reset | Correct pair explodes, disappears, toast shows hanzi/pinyin/English, tracker increments; wrong pair turns red and shakes ~450ms then resets without changing the tracker; clicks during animations ignored; toasts stack (max 3) and auto-dismiss; verified for hanzi-first and pinyin-first |
 | 5 | Sets and completion | Congratulations toast with Continue; next set of 6 until all words are done; final partial set; completion + Play again | After 6 matches the toast appears (Continue focused) and stays; Continue shows the next 6 unmatched words; tracker totals correct across sets; final set shows the remaining cards; after the last match: completion toast + Play again resets progress and reshuffles; a scripted run matches every word and ends at `total / total` |
 | 6 | Polish + audit | Motion tuning, reduced-motion fallbacks, keyboard operation, aria-live toasts, Lighthouse | 0 console errors through a full playthrough; whole game playable by keyboard only; `prefers-reduced-motion` removes shake/explosion movement; Lighthouse (desktop) Accessibility and Best Practices >= 95; build + lint clean |
+| 7 | Supabase connection | `@supabase/supabase-js`, `src/lib/supabase.js`, `.env` (git-ignored) + `.env.example`, anonymous sign-in on Welcome submit | Lint + build clean; submitting Welcome creates an anonymous auth user and its `public.users` row (trigger); 0 console errors. Not yet: saving name/email, resuming after refresh (needs RLS policies) |
+| 8 | Levels | `level` (1–5) on every word in `src/data/hsk1.js` (matches `supabase/seed.sql`); sets dealt from the current level; "Level N of 5" in the header; level-up toast with Continue | `npm run check:data` reports levels 30/30/30/30/29; scripted full run matches all 149 words, shows 4 level-up toasts then the final Play again toast, ends at 149 / 149; lint + build clean |
 
 ## Rules
 1. I build one phase, verify it, and report honestly (including anything I did not check).

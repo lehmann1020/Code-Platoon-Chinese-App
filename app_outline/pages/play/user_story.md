@@ -29,7 +29,9 @@ As a learner, I match each Chinese character to its pinyin, six words at a time,
 - [ ] **Correct:** both cards explode and are removed; a toast shows hanzi, pinyin and the English definition; the tracker increases by 1
 - [ ] **Wrong:** both cards turn red and shake ~450ms, then return to normal unselected; the tracker does not change; input is blocked briefly during the shake
 - [ ] When the 6th pair of a set is matched, a "Congratulations!" toast with a **Continue** button appears (stays until clicked; Continue is focused)
-- [ ] Clicking Continue loads the next set of up to 6 unmatched words (staggered entrance)
+- [ ] The 149 words are split into 5 levels (themed, easiest first). Sets of up to 6 come from the current level only; the header shows "Level N of 5"
+- [ ] When the last word of a level is matched, a "Level N complete!" toast with a **Continue** button appears (stays until clicked; Continue is focused) instead of the set toast
+- [ ] Clicking Continue loads the next set of up to 6 unmatched words (staggered entrance); after a level toast, the first set of the next level
 - [ ] The final set may have fewer than 6 cards; after it is matched the toast says "Congratulations! You've learned all N HSK 1 words!" and offers **Play again** (resets progress and reshuffles)
 - [ ] No two words in a set share the same pinyin
 - [ ] Tracker pinned at the bottom shows `matched / total` where total = number of words in the HSK 1 data file; the bar fills proportionally; `aria` progressbar semantics

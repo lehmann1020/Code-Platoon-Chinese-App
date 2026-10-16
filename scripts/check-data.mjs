@@ -1,5 +1,5 @@
 // Validates src/data/hsk1.js. Run: npm run check:data
-import { WORDS, TOTAL_WORDS } from '../src/data/hsk1.js'
+import { WORDS, TOTAL_WORDS, LEVEL_COUNT } from '../src/data/hsk1.js'
 import { SET_SIZE } from '../src/config/app.js'
 
 const problems = []
@@ -20,6 +20,14 @@ for (const w of WORDS) {
   if (!TONE_MARKED.test(w.pinyin) && !NEUTRAL_ONLY.has(w.pinyin)) note(`${w.id} ${w.hanzi}: pinyin "${w.pinyin}" has no tone mark`)
 }
 
+// Levels: every word has one (1..LEVEL_COUNT) and no level is empty.
+const perLevel = new Map()
+for (const w of WORDS) {
+  if (!Number.isInteger(w.level) || w.level < 1 || w.level > LEVEL_COUNT) note(`${w.id} ${w.hanzi}: missing or invalid level`)
+  else perLevel.set(w.level, (perLevel.get(w.level) ?? 0) + 1)
+}
+for (let l = 1; l <= LEVEL_COUNT; l++) if (!perLevel.get(l)) note(`level ${l} has no words`)
+
 // Pinyin shared by several words (informational; sets must never contain two of these together)
 const byPinyin = new Map()
 for (const w of WORDS) byPinyin.set(w.pinyin, [...(byPinyin.get(w.pinyin) ?? []), w.hanzi])
@@ -33,6 +41,7 @@ if (maxRepeat > sets) note(`a pinyin repeats ${maxRepeat}x but there are only ${
 
 console.log(`Words: ${TOTAL_WORDS}`)
 console.log(`Sets of ${SET_SIZE}: ${sets} (last set has ${WORDS.length - (sets - 1) * SET_SIZE} cards)`)
+console.log(`Levels: ${[...perLevel].sort((a, b) => a[0] - b[0]).map(([l, n]) => `${l}=${n}`).join(' ')}`)
 console.log(`Shared pinyin (kept out of the same set): ${shared.map(([p, hs]) => `${p} = ${hs.join(' / ')}`).join('; ') || 'none'}`)
 if (problems.length) { console.log(`\n${problems.length} problem(s):`); problems.forEach((p) => console.log(' - ' + p)); process.exit(1) }
 console.log('All checks passed.')

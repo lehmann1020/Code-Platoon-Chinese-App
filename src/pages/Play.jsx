@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import MatchCard from '../components/MatchCard.jsx'
 import Tracker from '../components/Tracker.jsx'
-import { getWord } from '../data/hsk1.js'
+import { getWord, LEVEL_COUNT, WORDS } from '../data/hsk1.js'
 import { useAppState } from '../state/useAppState.js'
 import { useToast } from '../toast/useToast.js'
 
@@ -46,10 +46,12 @@ export default function Play() {
     announced.current = round
     if (matched.size >= total) {
       toast.congrats({ heading: 'Congratulations!', message: `You've learned all ${total} HSK 1 words!`, actionLabel: 'Play again', onAction: restart })
+    } else if (WORDS.filter((w) => w.level === round.level).every((w) => matched.has(w.id))) {
+      toast.congrats({ heading: `Level ${round.level} complete!`, message: `On to level ${round.level + 1} of ${LEVEL_COUNT}.`, actionLabel: 'Continue', onAction: nextRound })
     } else {
       toast.congrats({ heading: 'Congratulations!', message: `You matched all ${round.ids.length} words in this set.`, actionLabel: 'Continue', onAction: nextRound })
     }
-  }, [roundDone, bursting, round, matched.size, total, toast, restart, nextRound])
+  }, [roundDone, bursting, round, matched, total, toast, restart, nextRound])
 
   function evaluate(hanziId, pinyinId) {
     const keys = [`hanzi:${hanziId}`, `pinyin:${pinyinId}`]

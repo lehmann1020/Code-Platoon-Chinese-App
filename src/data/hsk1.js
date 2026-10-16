@@ -152,11 +152,23 @@ const RAW = [
   ['做', 'zuò', 'to do; to make'],
 ]
 
+// Game levels: HSK 1 grouped by theme and difficulty (mirrors supabase/seed.sql; `npm run check:data` verifies every word has one).
+export const LEVEL_COUNT = 5
+const LEVEL_HANZI = {
+  1: ['一', '二', '三', '四', '五', '六', '七', '八', '九', '十', '我', '你', '他', '她', '我们', '好', '谢谢', '再见', '对不起', '没关系', '不客气', '请', '喂', '是', '不', '爱', '大', '小', '人', '个'],
+  2: ['爸爸', '妈妈', '儿子', '女儿', '朋友', '同学', '老师', '学生', '先生', '小姐', '吃', '喝', '茶', '水', '米饭', '菜', '苹果', '水果', '杯子', '狗', '家', '名字', '叫', '汉语', '中国', '北京', '喜欢', '认识', '高兴', '漂亮'],
+  3: ['今天', '明天', '昨天', '现在', '上午', '下午', '中午', '年', '月', '星期', '号', '点', '分钟', '时候', '岁', '天气', '冷', '热', '下雨', '学校', '商店', '饭店', '医院', '出租车', '飞机', '前面', '后面', '里', '上', '下'],
+  4: ['去', '来', '回', '看', '看见', '听', '说', '读', '写', '学习', '买', '开', '住', '坐', '做', '睡觉', '想', '打电话', '工作', '书', '本', '钱', '块', '电脑', '电视', '电影', '衣服', '椅子', '桌子', '东西'],
+  5: ['的', '了', '吗', '呢', '和', '很', '都', '太', '有', '没有', '会', '能', '在', '这', '那', '哪', '哪儿', '谁', '什么', '几', '多', '多少', '少', '些', '一点儿', '怎么', '怎么样', '字', '医生'],
+}
+const LEVEL_OF = new Map(Object.entries(LEVEL_HANZI).flatMap(([level, list]) => list.map((h) => [h, Number(level)])))
+
 export const WORDS = RAW.map(([hanzi, pinyin, english], i) => ({
   id: `hsk1-${String(i + 1).padStart(3, '0')}`,
   hanzi,
   pinyin,
   english,
+  level: LEVEL_OF.get(hanzi),   // 1..LEVEL_COUNT (undefined only if the word is missing from LEVEL_HANZI)
 }))
 
 export const TOTAL_WORDS = WORDS.length
