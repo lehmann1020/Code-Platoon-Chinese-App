@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { APP_NAME } from '../config/app.js'
+import { ensureSession } from '../lib/supabase.js'
 import { useAppState } from '../state/useAppState.js'
 
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
@@ -19,6 +20,8 @@ export default function Welcome() {
   const navigate = useNavigate()
   const [values, setValues] = useState({ name: '', email: '' })
   const [touched, setTouched] = useState({})
+  const [submitting, setSubmitting] = useState(false)
+  const [formError, setFormError] = useState('')
 
   const errors = validate(values)
   const valid = Object.keys(errors).length === 0
@@ -27,12 +30,20 @@ export default function Welcome() {
   const set = (field) => (e) => setValues((v) => ({ ...v, [field]: e.target.value }))
   const blur = (field) => () => setTouched((t) => ({ ...t, [field]: true }))
 
-  function submit(e) {
+  async function submit(e) {
     e.preventDefault()
     setTouched({ name: true, email: true })
-    if (!valid) return
-    signIn({ name: values.name.trim(), email: values.email.trim() })   // memory only; a refresh clears it
-    navigate('/play')
+    if (!valid || submitting) return
+    setSubmitting(true)
+    setFormError('')
+    try {
+      const authUser = await ensureSession()   // anonymous Supabase user (reused on later visits)
+      signIn({ id: authUser.id, name: values.name.trim(), email: values.email.trim() })
+      navigate('/play')
+    } catch {
+      setFormError('Could not connect. Please try again.')
+      setSubmitting(false)
+    }
   }
 
   return (
@@ -70,7 +81,8 @@ export default function Welcome() {
           />
           <small id="err-email" className="error" role={shown('email') ? 'alert' : undefined}>{shown('email') || ''}</small>
         </div>
-        <button type="submit" className="btn btn-primary" disabled={!valid}>Start matching</button>
+        <button type="submit" className="btn btn-primary" disabled={!valid || submitting}>Start matching</button>
+        <small className="error" role={formError ? 'alert' : undefined}>{formError}</small>
       </form>
     </main>
   )
