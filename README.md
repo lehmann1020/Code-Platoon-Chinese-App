@@ -2,9 +2,10 @@
 
 A single-page app for practising **HSK 1** Chinese vocabulary. Match each hanzi to its pinyin, six words at a time, until you've matched all 149 words.
 
-**Stack:** React 19 + Vite, React Router DOM (BrowserRouter), plain CSS. No API; all state lives in memory, so a refresh resets everything. Desktop only.
+**Stack:** React 19 + Vite, React Router DOM (BrowserRouter), plain CSS. Supabase (Postgres) database in `supabase/`. Desktop only. (Until the integration phase lands, the app still keeps its state in memory.)
 
 ## Run it
+From `front-end/` (copy `.env.example` to `.env` and fill in your Supabase URL and publishable key first):
 ```bash
 npm install
 npm run dev          # http://localhost:5173
@@ -25,6 +26,11 @@ Keyboard: Tab to a card, Enter or Space to select. Focus moves to the first card
 
 ## Project layout
 ```
+front-end/       the React app (everything below lives in here)
+supabase/        schema.sql, seed.sql, user_stories.md, api_notes.md
+.claude/         front-end-agent and supabase-agent; .mcp.json at the root
+
+front-end/
 app_outline/     specs: user journey, style guide, per-page user stories
 docs/            phase plan (phases.md) and the process templates this project was built from
 src/

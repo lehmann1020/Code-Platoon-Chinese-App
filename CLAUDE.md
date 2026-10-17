@@ -1,17 +1,27 @@
 # Hanzi Match
 
-React + Vite single-page app, React Router DOM (BrowserRouter). Front-end only: no API calls;
-all state is in memory and resets on refresh.
+Full-stack: a React + Vite single-page app (`front-end/`, React Router DOM with BrowserRouter) backed by a
+Supabase Postgres database (`supabase/`). The app talks to Supabase's REST API with the publishable key.
 
-## Where things are
-- `app_outline/` — user_journey.md, style_guide.md, app.png, pages/<page>/{user_story.md, wireframe.png}
-- `src/pages`, `src/components`, `src/state`, `src/data`, `src/config/app.js`
-- Optional copy-in patterns (carousel, favourites, onboarding guard…) are not part of the starter
+## Layout
+- `front-end/` — the React app: `src/{pages,components,state,data,lib,config}`, `app_outline/`, `docs/`, `scripts/`, `.env`
+  - `app_outline/` — user_journey.md, style_guide.md, app.png, pages/<page>/{user_story.md, wireframe.png}
+- `supabase/` — schema.sql, seed.sql, user_stories.md, api_notes.md (tested requests per table)
+- `.claude/agents/` — front-end-agent, supabase-agent; `.mcp.json` — Supabase MCP server
 
-## Rules
+## Rules (both halves)
+- Work in phases (see `front-end/docs/phases.md`); stop after each phase for my approval. After I approve, COMMIT (message names the phase) and push.
+- Run `npm run lint` and `npm run build` in `front-end/` before calling a phase done.
+- Keep screenshots in `.playwright-mcp/` (git-ignored). Never commit `.env`.
+
+## Front-end rules
 - Read the relevant page's `user_story.md` and wireframe before changing a page.
 - Use Context7 for library docs. Use Playwright to screenshot and compare to wireframes. Use Chrome DevTools for console/Lighthouse.
 - Desktop only (no mobile layouts or tests).
-- Work in phases (see `docs/phases.md`); stop after each phase for my approval. After I approve, COMMIT (message names the phase) and ask me before the first push / creating the GitHub repo; afterwards push each approved phase.
-- Keep screenshots in `.playwright-mcp/` (git-ignored).
-- Run `npm run lint` and `npm run build` before calling a phase done.
+- Keys come from `import.meta.env` (`VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY`). Publishable key only, never the secret key.
+
+## Back-end rules
+- Read `supabase/api_notes.md` before writing any request; the database is the source of truth.
+- No authentication or authorization yet. Every row uses the seeded user (`demo@hanzimatch.dev`, id in api_notes.md).
+- The tables' RLS policies are TEMPORARY ("dev: open access until auth"). Do not change RLS, tables or data without my approval.
+- Use the Supabase MCP for schema and SQL; record schema changes in `supabase/schema.sql`.
