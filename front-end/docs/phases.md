@@ -1,6 +1,6 @@
 # Hanzi Match — Build Phases
 
-**Status:** all phases (0–8) built and approved.
+**Status:** all phases (0–9) built and approved.
 The word list ended at 149 words (火车站 removed), so there are 25 sets (24 of 6, one of 5).
 
 Each phase ends with Playwright/DevTools verification and **your approval**. After approval: commit (message names the phase), push after the first-push confirmation.
@@ -17,6 +17,7 @@ Desktop only. Evidence (screenshots) goes in `.playwright-mcp/` (git-ignored).
 | 6 | Polish + audit | Motion tuning, reduced-motion fallbacks, keyboard operation, aria-live toasts, Lighthouse | 0 console errors through a full playthrough; whole game playable by keyboard only; `prefers-reduced-motion` removes shake/explosion movement; Lighthouse (desktop) Accessibility and Best Practices >= 95; build + lint clean |
 | 7 | Supabase connection | `@supabase/supabase-js`, `src/lib/supabase.js`, `.env` (git-ignored) + `.env.example`, anonymous sign-in on Welcome submit | Lint + build clean; submitting Welcome creates an anonymous auth user and its `public.users` row (trigger); 0 console errors. Not yet: saving name/email, resuming after refresh (needs RLS policies) |
 | 8 | Levels | `level` (1–5) on every word in `src/data/hsk1.js` (matches `supabase/seed.sql`); sets dealt from the current level; "Level N of 5" in the header; level-up toast with Continue | `npm run check:data` reports levels 30/30/30/30/29; scripted full run matches all 149 words, shows 4 level-up toasts then the final Play again toast, ends at 149 / 149; lint + build clean |
+| 9 | Full-stack integration | Restructure into `front-end/` + `supabase/`; TEMPORARY RLS policies "dev: open access until auth" (anon, all tables); one seeded user (no login); `src/lib/api.js` holds every Supabase call; words, matches (`user_words`) and sessions (`game_sessions`) come from / save to Supabase; Welcome saves name + email to the seed user; anonymous sign-in removed; `src/data/hsk1.js` kept for scripts/seed only | Lint + build + check:data clean; matches are saved as `user_words` rows; refresh + Welcome resumes progress (tracker and dealt words) and reuses the open session; scripted full run (2026-10-17): 149 / 149, 4 level-up toasts, final toast, 149 rows, session `completed_at` set; Play again clears the rows, opens a new session, back to 0 / 149, Level 1; a `user_words` row inserted outside the app (SQL) shows after refresh (1 / 149, that word not dealt); 0 console errors |
 
 ## Rules
 1. I build one phase, verify it, and report honestly (including anything I did not check).
