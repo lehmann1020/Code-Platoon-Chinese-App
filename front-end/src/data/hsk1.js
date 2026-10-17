@@ -1,3 +1,4 @@
+// The app reads its words from Supabase; this file is for scripts/seed only.
 // HSK 1 vocabulary (classic list, trimmed to the words I am confident about). Written from memory.
 // Columns: hanzi, pinyin (tone marks), English definition.
 const RAW = [

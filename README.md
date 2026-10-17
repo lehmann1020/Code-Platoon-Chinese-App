@@ -2,7 +2,7 @@
 
 A single-page app for practising **HSK 1** Chinese vocabulary. Match each hanzi to its pinyin, six words at a time, until you've matched all 149 words.
 
-**Stack:** React 19 + Vite, React Router DOM (BrowserRouter), plain CSS. Supabase (Postgres) database in `supabase/`. Desktop only. (Until the integration phase lands, the app still keeps its state in memory.)
+**Stack:** React 19 + Vite, React Router DOM (BrowserRouter), plain CSS. Supabase (Postgres) database in `supabase/`. Desktop only. Words and each player's matched words and game sessions are stored in Supabase (no login yet: one seeded demo user).
 
 ## Run it
 From `front-end/` (copy `.env.example` to `.env` and fill in your Supabase URL and publishable key first):

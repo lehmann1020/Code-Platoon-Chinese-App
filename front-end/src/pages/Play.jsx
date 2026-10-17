@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import MatchCard from '../components/MatchCard.jsx'
 import Tracker from '../components/Tracker.jsx'
-import { getWord, LEVEL_COUNT, WORDS } from '../data/hsk1.js'
+import { LEVEL_COUNT } from '../config/app.js'
+import { finishSession, saveMatch } from '../lib/api.js'
 import { useAppState } from '../state/useAppState.js'
 import { useToast } from '../toast/useToast.js'
 
@@ -9,7 +10,7 @@ const BURST_MS = 1100  // explosion length (matches the 1.05s card-pop animation
 const SHAKE_MS = 450   // wrong-match shake length
 
 export default function Play() {
-  const { round, matched, setMatched, total, restart, nextRound } = useAppState()
+  const { round, words, getWord, matched, setMatched, total, restart, nextRound } = useAppState()
   const toast = useToast()
   const [selected, setSelected] = useState(null)   // { kind: 'hanzi' | 'pinyin', id } | null
   const [anim, setAnim] = useState({})             // `${kind}:${id}` -> 'burst' | 'wrong'
@@ -40,18 +41,18 @@ export default function Play() {
   // When every card in the set is matched (and the last explosion has finished), congratulate.
   // The toast stays until clicked: "Continue" deals the next set; after the final set it offers "Play again".
   const bursting = Object.values(anim).includes('burst')
-  const roundDone = round.ids.every((id) => matched.has(id))
+  const roundDone = !!round && round.ids.every((id) => matched.has(id))
   useEffect(() => {
-    if (!roundDone || bursting || announced.current === round) return
+    if (!round || !roundDone || bursting || announced.current === round) return
     announced.current = round
     if (matched.size >= total) {
       toast.congrats({ heading: 'Congratulations!', message: `You've learned all ${total} HSK 1 words!`, actionLabel: 'Play again', onAction: restart })
-    } else if (WORDS.filter((w) => w.level === round.level).every((w) => matched.has(w.id))) {
+    } else if (words.filter((w) => w.level === round.level).every((w) => matched.has(w.id))) {
       toast.congrats({ heading: `Level ${round.level} complete!`, message: `On to level ${round.level + 1} of ${LEVEL_COUNT}.`, actionLabel: 'Continue', onAction: nextRound })
     } else {
       toast.congrats({ heading: 'Congratulations!', message: `You matched all ${round.ids.length} words in this set.`, actionLabel: 'Continue', onAction: nextRound })
     }
-  }, [roundDone, bursting, round, matched, total, toast, restart, nextRound])
+  }, [roundDone, bursting, round, words, matched, total, toast, restart, nextRound])
 
   function evaluate(hanziId, pinyinId) {
     const keys = [`hanzi:${hanziId}`, `pinyin:${pinyinId}`]
@@ -59,6 +60,9 @@ export default function Play() {
       setMatched((prev) => new Set(prev).add(hanziId))
       setAnimFor(keys, 'burst')
       toast.definition(getWord(hanziId))
+      // Save in the background; a failed save must not break the game.
+      saveMatch(hanziId).catch((err) => console.error('Could not save match', err))
+      if (matched.size + 1 >= total) finishSession().catch((err) => console.error('Could not finish session', err))
       // After the explosion the matched cards unmount; if that dropped keyboard focus, move it to the next card.
       later(() => {
         setAnimFor(keys, null)
@@ -97,6 +101,8 @@ export default function Play() {
         onSelect={handleSelect}
       />
     ))
+
+  if (!round) return <main className="board-page"><p>Loading words…</p></main>
 
   return (
     <>

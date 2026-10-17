@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { APP_NAME } from '../config/app.js'
-import { ensureSession } from '../lib/supabase.js'
 import { useAppState } from '../state/useAppState.js'
 
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
@@ -37,8 +36,7 @@ export default function Welcome() {
     setSubmitting(true)
     setFormError('')
     try {
-      const authUser = await ensureSession()   // anonymous Supabase user (reused on later visits)
-      signIn({ id: authUser.id, name: values.name.trim(), email: values.email.trim() })
+      await signIn({ name: values.name.trim(), email: values.email.trim() })   // saves details, loads words + progress
       navigate('/play')
     } catch {
       setFormError('Could not connect. Please try again.')
