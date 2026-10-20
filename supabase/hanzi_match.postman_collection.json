@@ -1,0 +1,2291 @@
+{
+  "info": {
+    "name": "Hanzi Match API (authenticated)",
+    "description": "All 5 Hanzi Match tables with real logins. Set the collection variable publishable_key (your sb_publishable_... key), then Run the collection in order. Folder 0 signs up (or reuses) two test accounts and saves their access tokens; every table request sends user A's token, and folder 6 uses user B's token to prove RLS isolation. Needs 'Confirm email' OFF in Supabase (Authentication > Sign In / Providers > Email). Cleans up its rows at the end; the two test accounts stay in Authentication > Users.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "0 Auth",
+      "item": [
+        {
+          "name": "Sign up user A",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{publishable_key}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/auth/v1/signup",
+            "description": "Creates test user A. `data.name` goes into the auth metadata; the on_auth_user_created trigger copies it into public.users. 422 means the account exists from an earlier run, which is fine.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{email_a}}\",\n  \"password\": \"{{password}}\",\n  \"data\": {\n    \"name\": \"Postman A\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 200 or 422', () => pm.expect(pm.response.code).to.be.oneOf([200, 422]));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Sign up user B",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{publishable_key}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/auth/v1/signup",
+            "description": "Creates test user B. `data.name` goes into the auth metadata; the on_auth_user_created trigger copies it into public.users. 422 means the account exists from an earlier run, which is fine.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{email_b}}\",\n  \"password\": \"{{password}}\",\n  \"data\": {\n    \"name\": \"Postman B\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 200 or 422', () => pm.expect(pm.response.code).to.be.oneOf([200, 422]));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Log in user A (saves access_token, user_id)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{publishable_key}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/auth/v1/token?grant_type=password",
+            "description": "Logs in with email + password and saves the access token for the requests that follow.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{email_a}}\",\n  \"password\": \"{{password}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 200', () => pm.response.to.have.status(200));",
+                  "const j = pm.response.json();",
+                  "pm.test('has access_token, refresh_token, expires_in 3600', () => { pm.expect(j.access_token).to.be.a('string'); pm.expect(j.refresh_token).to.be.a('string'); pm.expect(j.expires_in).to.eql(3600); });",
+                  "pm.collectionVariables.set('access_token', j.access_token);",
+                  "pm.collectionVariables.set('user_id', j.user.id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Log in user B (saves access_token_b, user_id_b)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{publishable_key}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/auth/v1/token?grant_type=password",
+            "description": "Logs in with email + password and saves the access token for the requests that follow.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{email_b}}\",\n  \"password\": \"{{password}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 200', () => pm.response.to.have.status(200));",
+                  "const j = pm.response.json();",
+                  "pm.test('has access_token, refresh_token, expires_in 3600', () => { pm.expect(j.access_token).to.be.a('string'); pm.expect(j.refresh_token).to.be.a('string'); pm.expect(j.expires_in).to.eql(3600); });",
+                  "pm.collectionVariables.set('access_token_b', j.access_token);",
+                  "pm.collectionVariables.set('user_id_b', j.user.id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Who am I? (user A)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{publishable_key}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": "{{base_url}}/auth/v1/user",
+            "description": "Returns the user the token belongs to."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 200', () => pm.response.to.have.status(200));",
+                  "const j = pm.response.json();",
+                  "pm.test('is user A, role authenticated', () => { pm.expect(j.id).to.eql(pm.collectionVariables.get('user_id')); pm.expect(j.role).to.eql('authenticated'); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "1 words (shared, read-only)",
+      "item": [
+        {
+          "name": "GET all words (in slug order)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{publishable_key}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": "{{base_url}}/rest/v1/words?select=slug,hanzi,pinyin,english,level&order=slug",
+            "description": "All 149 HSK 1 words. Add order=slug: rows come back in no guaranteed order."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('149 row(s)', () => pm.expect(pm.response.json()).to.have.lengthOf(149));",
+                  "pm.test('first is hsk1-001', () => pm.expect(pm.response.json()[0].slug).to.eql('hsk1-001'));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET level 5 words",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{publishable_key}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": "{{base_url}}/rest/v1/words?level=eq.5&select=slug,hanzi",
+            "description": "Filter by game level (30/30/30/30/29)."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('29 row(s)', () => pm.expect(pm.response.json()).to.have.lengthOf(29));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET a word's id by slug (saves word_id)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{publishable_key}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": "{{base_url}}/rest/v1/words?slug=eq.hsk1-001&select=id,hanzi",
+            "description": "user_words and favorite_words store the word's uuid, not the slug."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('1 row(s)', () => pm.expect(pm.response.json()).to.have.lengthOf(1));",
+                  "pm.collectionVariables.set('word_id', pm.response.json()[0].id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET a second word's id (saves word_id_2)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{publishable_key}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": "{{base_url}}/rest/v1/words?slug=eq.hsk1-002&select=id",
+            "description": "Used for user B's row in the isolation folder."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('1 row(s)', () => pm.expect(pm.response.json()).to.have.lengthOf(1));",
+                  "pm.collectionVariables.set('word_id_2', pm.response.json()[0].id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "POST a word -> 403 (read-only)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{publishable_key}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": "{{base_url}}/rest/v1/words",
+            "description": "Logged-in users have SELECT only on words.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"slug\": \"x\",\n  \"hanzi\": \"x\",\n  \"pinyin\": \"x\",\n  \"english\": \"x\",\n  \"level\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 403', () => pm.response.to.have.status(403));",
+                  "pm.test('error code 42501', () => pm.expect(pm.response.json().code).to.eql('42501'));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PATCH a word -> 403",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{publishable_key}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": "{{base_url}}/rest/v1/words?slug=eq.hsk1-001",
+            "description": "No UPDATE grant.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"english\": \"changed\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 403', () => pm.response.to.have.status(403));",
+                  "pm.test('error code 42501', () => pm.expect(pm.response.json().code).to.eql('42501'));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "DELETE a word -> 403",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{publishable_key}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": "{{base_url}}/rest/v1/words?slug=eq.hsk1-001",
+            "description": "No DELETE grant."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 403', () => pm.response.to.have.status(403));",
+                  "pm.test('error code 42501', () => pm.expect(pm.response.json().code).to.eql('42501'));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "2 users (your own row only)",
+      "item": [
+        {
+          "name": "GET users -> only my row",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{publishable_key}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": "{{base_url}}/rest/v1/users?select=id,name,email",
+            "description": "RLS returns only the logged-in user's row, even with no filter."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('1 row(s)', () => pm.expect(pm.response.json()).to.have.lengthOf(1));",
+                  "pm.test('it is user A', () => pm.expect(pm.response.json()[0].id).to.eql(pm.collectionVariables.get('user_id')));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET user B's row by id -> empty",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{publishable_key}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": "{{base_url}}/rest/v1/users?id=eq.{{user_id_b}}&select=id,name",
+            "description": "Another user's row is invisible: 200 with [], not an error."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('0 row(s)', () => pm.expect(pm.response.json()).to.have.lengthOf(0));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PATCH my name",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{publishable_key}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              },
+              {
+                "key": "Prefer",
+                "value": "return=representation"
+              }
+            ],
+            "url": "{{base_url}}/rest/v1/users?id=eq.{{user_id}}",
+            "description": "Only `name` is editable (column grant).",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Postman A renamed\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('1 row(s)', () => pm.expect(pm.response.json()).to.have.lengthOf(1));",
+                  "pm.test('name saved', () => pm.expect(pm.response.json()[0].name).to.eql('Postman A renamed'));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PATCH my email -> 403 (only name is editable)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{publishable_key}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": "{{base_url}}/rest/v1/users?id=eq.{{user_id}}",
+            "description": "email comes from the auth account; authenticated can update the name column only.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"other@hanzimatch.dev\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 403', () => pm.response.to.have.status(403));",
+                  "pm.test('error code 42501', () => pm.expect(pm.response.json().code).to.eql('42501'));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PATCH a blank name -> 400",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{publishable_key}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": "{{base_url}}/rest/v1/users?id=eq.{{user_id}}",
+            "description": "CHECK rule: a name can't be blank.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"   \"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 400', () => pm.response.to.have.status(400));",
+                  "pm.test('error code 23514', () => pm.expect(pm.response.json().code).to.eql('23514'));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "POST a user -> 403 (the sign-up trigger creates rows)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{publishable_key}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": "{{base_url}}/rest/v1/users",
+            "description": "No INSERT grant.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": \"{{user_id_b}}\",\n  \"name\": \"x\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 403', () => pm.response.to.have.status(403));",
+                  "pm.test('error code 42501', () => pm.expect(pm.response.json().code).to.eql('42501'));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "DELETE my row -> 403",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{publishable_key}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": "{{base_url}}/rest/v1/users?id=eq.{{user_id}}",
+            "description": "No DELETE grant; deleting the auth user cascades instead."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 403', () => pm.response.to.have.status(403));",
+                  "pm.test('error code 42501', () => pm.expect(pm.response.json().code).to.eql('42501'));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "3 user_words (own rows; no user_id sent)",
+      "item": [
+        {
+          "name": "POST a match",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{publishable_key}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              },
+              {
+                "key": "Prefer",
+                "value": "return=representation"
+              }
+            ],
+            "url": "{{base_url}}/rest/v1/user_words",
+            "description": "What the app sends on a correct match. No user_id: the database fills it from the token (default auth.uid()).",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"word_id\": \"{{word_id}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 201', () => pm.response.to.have.status(201));",
+                  "pm.test('user_id filled in from the token', () => pm.expect(pm.response.json()[0].user_id).to.eql(pm.collectionVariables.get('user_id')));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET my matches",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{publishable_key}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": "{{base_url}}/rest/v1/user_words?select=word_id,matched_at",
+            "description": "RLS: only my rows, no filter needed."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('1 row(s)', () => pm.expect(pm.response.json()).to.have.lengthOf(1));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET my matches with the word",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{publishable_key}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": "{{base_url}}/rest/v1/user_words?select=matched_at,words(slug,hanzi,pinyin)",
+            "description": "`words(...)` embeds the matched word through the foreign key."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('1 row(s)', () => pm.expect(pm.response.json()).to.have.lengthOf(1));",
+                  "pm.test('embedded word', () => pm.expect(pm.response.json()[0].words.slug).to.eql('hsk1-001'));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "POST the same match twice -> 409",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{publishable_key}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": "{{base_url}}/rest/v1/user_words",
+            "description": "Primary key (user_id, word_id). The app ignores 23505.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"word_id\": \"{{word_id}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 409', () => pm.response.to.have.status(409));",
+                  "pm.test('error code 23505', () => pm.expect(pm.response.json().code).to.eql('23505'));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "POST a word that doesn't exist -> 409",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{publishable_key}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": "{{base_url}}/rest/v1/user_words",
+            "description": "Foreign key to words.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"word_id\": \"00000000-0000-0000-0000-000000000000\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 409', () => pm.response.to.have.status(409));",
+                  "pm.test('error code 23503', () => pm.expect(pm.response.json().code).to.eql('23503'));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "POST with user B's user_id -> 403",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{publishable_key}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": "{{base_url}}/rest/v1/user_words",
+            "description": "RLS `with check`: you can only insert rows for yourself.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"user_id\": \"{{user_id_b}}\",\n  \"word_id\": \"{{word_id_2}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 403', () => pm.response.to.have.status(403));",
+                  "pm.test('error code 42501', () => pm.expect(pm.response.json().code).to.eql('42501'));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "4 game_sessions (own rows; no user_id sent)",
+      "item": [
+        {
+          "name": "POST a session (saves session_id)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{publishable_key}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              },
+              {
+                "key": "Prefer",
+                "value": "return=representation"
+              }
+            ],
+            "url": "{{base_url}}/rest/v1/game_sessions",
+            "description": "Starts a playthrough. started_at defaults to now().",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 201', () => pm.response.to.have.status(201));",
+                  "const j = pm.response.json()[0];",
+                  "pm.test('owned by me, open', () => { pm.expect(j.user_id).to.eql(pm.collectionVariables.get('user_id')); pm.expect(j.completed_at).to.eql(null); });",
+                  "pm.collectionVariables.set('session_id', j.id);",
+                  "pm.collectionVariables.set('started_at', j.started_at);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET my open session",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{publishable_key}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": "{{base_url}}/rest/v1/game_sessions?completed_at=is.null&select=id,started_at&order=started_at.desc&limit=1",
+            "description": "What the app runs to reuse an open session."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('1 row(s)', () => pm.expect(pm.response.json()).to.have.lengthOf(1));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PATCH completed_at before started_at -> 400",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{publishable_key}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": "{{base_url}}/rest/v1/game_sessions?id=eq.{{session_id}}",
+            "description": "CHECK rule completed_at >= started_at.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"completed_at\": \"2000-01-01T00:00:00Z\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 400', () => pm.response.to.have.status(400));",
+                  "pm.test('error code 23514', () => pm.expect(pm.response.json().code).to.eql('23514'));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PATCH finish the session",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{publishable_key}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              },
+              {
+                "key": "Prefer",
+                "value": "return=representation"
+              }
+            ],
+            "url": "{{base_url}}/rest/v1/game_sessions?id=eq.{{session_id}}",
+            "description": "completed_at is set from the server's started_at + 1 s, so a slow laptop clock can't break the CHECK rule.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"completed_at\": \"{{completed_at}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const t = new Date(pm.collectionVariables.get('started_at')).getTime() + 1000;",
+                  "pm.collectionVariables.set('completed_at', new Date(t).toISOString());"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('1 row(s)', () => pm.expect(pm.response.json()).to.have.lengthOf(1));",
+                  "pm.test('completed', () => pm.expect(pm.response.json()[0].completed_at).to.not.eql(null));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET finished count",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{publishable_key}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": "{{base_url}}/rest/v1/game_sessions?completed_at=not.is.null&select=id",
+            "description": "How many playthroughs I finished."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('1 row(s)', () => pm.expect(pm.response.json()).to.have.lengthOf(1));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "5 favorite_words (own rows; no user_id sent)",
+      "item": [
+        {
+          "name": "POST a favorite",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{publishable_key}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              },
+              {
+                "key": "Prefer",
+                "value": "return=representation"
+              }
+            ],
+            "url": "{{base_url}}/rest/v1/favorite_words",
+            "description": "No user_id sent.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"word_id\": \"{{word_id}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 201', () => pm.response.to.have.status(201));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET my favorites with the word",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{publishable_key}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": "{{base_url}}/rest/v1/favorite_words?select=created_at,words(hanzi,pinyin,english)",
+            "description": ""
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('1 row(s)', () => pm.expect(pm.response.json()).to.have.lengthOf(1));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "6 Isolation: user B vs user A's rows",
+      "item": [
+        {
+          "name": "B: POST own match (no user_id)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{publishable_key}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token_b}}"
+              },
+              {
+                "key": "Prefer",
+                "value": "return=representation"
+              }
+            ],
+            "url": "{{base_url}}/rest/v1/user_words",
+            "description": "B's row, for comparison.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"word_id\": \"{{word_id_2}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 201', () => pm.response.to.have.status(201));",
+                  "pm.test('owned by B', () => pm.expect(pm.response.json()[0].user_id).to.eql(pm.collectionVariables.get('user_id_b')));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "B: GET user_words -> only B's",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{publishable_key}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token_b}}"
+              }
+            ],
+            "url": "{{base_url}}/rest/v1/user_words?select=user_id,word_id",
+            "description": "A's match is invisible to B."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('1 row(s)', () => pm.expect(pm.response.json()).to.have.lengthOf(1));",
+                  "pm.test('none of A\\'s', () => pm.expect(pm.response.json().every(r => r.user_id === pm.collectionVariables.get('user_id_b'))).to.be.true);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "B: GET A's matches by user_id -> empty",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{publishable_key}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token_b}}"
+              }
+            ],
+            "url": "{{base_url}}/rest/v1/user_words?user_id=eq.{{user_id}}&select=word_id",
+            "description": "Filtering for A's id doesn't help."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('0 row(s)', () => pm.expect(pm.response.json()).to.have.lengthOf(0));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "B: GET game_sessions -> empty",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{publishable_key}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token_b}}"
+              }
+            ],
+            "url": "{{base_url}}/rest/v1/game_sessions?select=id",
+            "description": ""
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('0 row(s)', () => pm.expect(pm.response.json()).to.have.lengthOf(0));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "B: GET favorite_words -> empty",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{publishable_key}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token_b}}"
+              }
+            ],
+            "url": "{{base_url}}/rest/v1/favorite_words?select=word_id",
+            "description": ""
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('0 row(s)', () => pm.expect(pm.response.json()).to.have.lengthOf(0));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "B: PATCH A's session -> 0 rows changed",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{publishable_key}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token_b}}"
+              },
+              {
+                "key": "Prefer",
+                "value": "return=representation"
+              }
+            ],
+            "url": "{{base_url}}/rest/v1/game_sessions?id=eq.{{session_id}}",
+            "description": "RLS hides A's row, so the update matches nothing: 200 with [].",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"completed_at\": null\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('0 row(s)', () => pm.expect(pm.response.json()).to.have.lengthOf(0));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "B: DELETE A's match -> 0 rows deleted",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{publishable_key}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token_b}}"
+              },
+              {
+                "key": "Prefer",
+                "value": "return=representation"
+              }
+            ],
+            "url": "{{base_url}}/rest/v1/user_words?user_id=eq.{{user_id}}",
+            "description": ""
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('0 row(s)', () => pm.expect(pm.response.json()).to.have.lengthOf(0));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "B: PATCH A's name -> 0 rows changed",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{publishable_key}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token_b}}"
+              },
+              {
+                "key": "Prefer",
+                "value": "return=representation"
+              }
+            ],
+            "url": "{{base_url}}/rest/v1/users?id=eq.{{user_id}}",
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"hacked\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('0 row(s)', () => pm.expect(pm.response.json()).to.have.lengthOf(0));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "B: POST a favorite as user A -> 403",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{publishable_key}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token_b}}"
+              }
+            ],
+            "url": "{{base_url}}/rest/v1/favorite_words",
+            "description": "RLS `with check` rejects another user's id.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"user_id\": \"{{user_id}}\",\n  \"word_id\": \"{{word_id_2}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 403', () => pm.response.to.have.status(403));",
+                  "pm.test('error code 42501', () => pm.expect(pm.response.json().code).to.eql('42501'));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "A: still has everything",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{publishable_key}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": "{{base_url}}/rest/v1/user_words?select=word_id,users(name)",
+            "description": "A's match and name survived B's attempts."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('1 row(s)', () => pm.expect(pm.response.json()).to.have.lengthOf(1));",
+                  "pm.test('name not hacked', () => pm.expect(pm.response.json()[0].users.name).to.eql('Postman A renamed'));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Logged out (no token): GET words -> 401",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{publishable_key}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/rest/v1/words?select=slug&limit=1",
+            "description": "anon has no grants on any table."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 401', () => pm.response.to.have.status(401));",
+                  "pm.test('error code 42501', () => pm.expect(pm.response.json().code).to.eql('42501'));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Logged out (no token): GET user_words -> 401",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{publishable_key}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/rest/v1/user_words?select=word_id",
+            "description": ""
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 401', () => pm.response.to.have.status(401));",
+                  "pm.test('error code 42501', () => pm.expect(pm.response.json().code).to.eql('42501'));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "7 Expected auth errors (these SHOULD fail)",
+      "item": [
+        {
+          "name": "Log in with a wrong password -> 400",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{publishable_key}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/auth/v1/token?grant_type=password",
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{email_a}}\",\n  \"password\": \"wrong-password\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 400', () => pm.response.to.have.status(400));",
+                  "pm.test('invalid_credentials', () => pm.expect(pm.response.json().error_code).to.eql('invalid_credentials'));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Sign up with an email that exists -> 422",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{publishable_key}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/auth/v1/signup",
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{email_a}}\",\n  \"password\": \"{{password}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 422', () => pm.response.to.have.status(422));",
+                  "pm.test('user_already_exists', () => pm.expect(pm.response.json().error_code).to.eql('user_already_exists'));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Sign up with a short password -> 422",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{publishable_key}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/auth/v1/signup",
+            "description": "Minimum 6 characters.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"hm-postman-short@hanzimatch.dev\",\n  \"password\": \"12345\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 422', () => pm.response.to.have.status(422));",
+                  "pm.test('weak_password', () => pm.expect(pm.response.json().error_code).to.eql('weak_password'));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Broken token -> 401",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{publishable_key}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{not_a_token}}"
+              }
+            ],
+            "url": "{{base_url}}/rest/v1/user_words?select=word_id",
+            "description": "An Authorization header that isn't a valid JWT."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 401', () => pm.response.to.have.status(401));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "8 Cleanup",
+      "item": [
+        {
+          "name": "A: DELETE my matches (Play again)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{publishable_key}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              },
+              {
+                "key": "Prefer",
+                "value": "return=representation"
+              }
+            ],
+            "url": "{{base_url}}/rest/v1/user_words?user_id=eq.{{user_id}}",
+            "description": "What the app's Play again sends. A delete must be filtered."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('1 row(s)', () => pm.expect(pm.response.json()).to.have.lengthOf(1));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "A: DELETE my favorites",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{publishable_key}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              },
+              {
+                "key": "Prefer",
+                "value": "return=representation"
+              }
+            ],
+            "url": "{{base_url}}/rest/v1/favorite_words?user_id=eq.{{user_id}}",
+            "description": ""
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('1 row(s)', () => pm.expect(pm.response.json()).to.have.lengthOf(1));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "A: DELETE my sessions",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{publishable_key}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              },
+              {
+                "key": "Prefer",
+                "value": "return=representation"
+              }
+            ],
+            "url": "{{base_url}}/rest/v1/game_sessions?user_id=eq.{{user_id}}",
+            "description": ""
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('1 row(s)', () => pm.expect(pm.response.json()).to.have.lengthOf(1));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "A: put my name back",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{publishable_key}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": "{{base_url}}/rest/v1/users?id=eq.{{user_id}}",
+            "description": "So the next run starts the same.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Postman A\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 204', () => pm.response.to.have.status(204));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "B: DELETE my matches",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{publishable_key}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token_b}}"
+              },
+              {
+                "key": "Prefer",
+                "value": "return=representation"
+              }
+            ],
+            "url": "{{base_url}}/rest/v1/user_words?user_id=eq.{{user_id_b}}",
+            "description": ""
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('1 row(s)', () => pm.expect(pm.response.json()).to.have.lengthOf(1));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Log out user A",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{publishable_key}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": "{{base_url}}/auth/v1/logout",
+            "description": "Revokes A's session (refresh token)."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 204', () => pm.response.to.have.status(204));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Log out user B",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{publishable_key}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token_b}}"
+              }
+            ],
+            "url": "{{base_url}}/auth/v1/logout",
+            "description": ""
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 204', () => pm.response.to.have.status(204));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "After log out: A's token can't refresh the session",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{publishable_key}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": "{{base_url}}/auth/v1/user",
+            "description": "Auth rejects the revoked session. (PostgREST still accepts the JWT until it expires, max 1 hour.)"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 401 or 403', () => pm.expect(pm.response.code).to.be.oneOf([401, 403]));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "https://ootwwoxumqafcjyriuex.supabase.co"
+    },
+    {
+      "key": "publishable_key",
+      "value": ""
+    },
+    {
+      "key": "email_a",
+      "value": "hm-postman-a@hanzimatch.dev"
+    },
+    {
+      "key": "email_b",
+      "value": "hm-postman-b@hanzimatch.dev"
+    },
+    {
+      "key": "password",
+      "value": "TestPass123!"
+    },
+    {
+      "key": "access_token",
+      "value": ""
+    },
+    {
+      "key": "user_id",
+      "value": ""
+    },
+    {
+      "key": "access_token_b",
+      "value": ""
+    },
+    {
+      "key": "user_id_b",
+      "value": ""
+    },
+    {
+      "key": "word_id",
+      "value": ""
+    },
+    {
+      "key": "word_id_2",
+      "value": ""
+    },
+    {
+      "key": "session_id",
+      "value": ""
+    },
+    {
+      "key": "started_at",
+      "value": ""
+    },
+    {
+      "key": "completed_at",
+      "value": ""
+    },
+    {
+      "key": "not_a_token",
+      "value": "abc"
+    }
+  ]
+}
