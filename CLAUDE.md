@@ -22,6 +22,12 @@ Supabase Postgres database (`supabase/`). The app talks to Supabase's REST API w
 
 ## Back-end rules
 - Read `supabase/api_notes.md` before writing any request; the database is the source of truth.
-- No authentication or authorization yet. Every row uses the seeded user (`demo@hanzimatch.dev`, id in api_notes.md).
-- The tables' RLS policies are TEMPORARY ("dev: open access until auth"). Do not change RLS, tables or data without my approval.
+- **Authentication is being added with Supabase Auth** (Register, Log in, Log out, session recovery on refresh).
+  The seeded demo user and the TEMPORARY `dev: open access until auth` policies are being removed; do not recreate them.
+- `users.id` is the `auth.users` id; the `on_auth_user_created` trigger creates the row (name from sign-up metadata).
+  Every `user_id` column is `not null default auth.uid()` with `on delete cascade`; the app never sends a user id.
+- RLS policies are to `authenticated` only, using `(select auth.uid())`. Per-user tables (`user_words`, `game_sessions`,
+  `favorite_words`) allow only the owner's rows; `words` is read-only; `users` is read + update own row (name only).
+- I have approved the one-time drop and recreate for the auth migration (CSV backups in `supabase/backups/`).
+  Otherwise, do not change RLS, tables or data without my approval.
 - Use the Supabase MCP for schema and SQL; record schema changes in `supabase/schema.sql`.

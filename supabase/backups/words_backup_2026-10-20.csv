@@ -1,0 +1,150 @@
+id,slug,hanzi,pinyin,english,level
+10483f80-fd69-4044-a6ef-4b32497ee50e,hsk1-001,爱,"ài","to love",1
+c30f608d-191b-40e7-be20-2e7493cc730f,hsk1-002,八,"bā","eight",1
+6a044fc5-ee66-40da-b326-4dea7c14090d,hsk1-003,爸爸,"bàba","dad",2
+2c469f7d-5afb-45ee-8ad3-6c4977e96f76,hsk1-004,杯子,"bēizi","cup; glass",2
+e407d99c-3e3f-4165-b1b6-951a08365324,hsk1-005,北京,"Běijīng","Beijing",2
+1ace0885-3d36-4c72-b354-3effa2a2d7da,hsk1-006,本,"běn","measure word for books",4
+6c6dba59-bcd7-49de-a335-362885304dc3,hsk1-007,不客气,"bú kèqi","you're welcome",1
+38845f94-81bb-48e6-b347-b6b361af2709,hsk1-008,不,"bù","not; no",1
+7760cd0d-5bc5-4e0f-b004-b05c4c097627,hsk1-009,菜,"cài","dish; vegetable",2
+26daff1b-126b-4a1c-ab1b-7910aa6c9e6d,hsk1-010,茶,"chá","tea",2
+a256785e-21d5-468e-8da7-96277a2ffbdd,hsk1-011,吃,"chī","to eat",2
+1a67b9a3-d889-4382-a93d-f17dfaa0feb5,hsk1-012,出租车,"chūzūchē","taxi",3
+2d5e1ace-df96-4757-be16-1338988949f4,hsk1-013,打电话,"dǎ diànhuà","to make a phone call",4
+a2167865-cdc8-426d-aee0-e645274b24a2,hsk1-014,大,"dà","big",1
+9500e17a-1e6f-454e-bbaa-752dfde4a075,hsk1-015,的,"de","possessive particle (""'s"")",5
+e2148ddb-85b4-4c39-b1bb-3e2ae3eeb017,hsk1-016,点,"diǎn","o'clock; a little",3
+29fa4c1a-8b9c-44ea-a1d7-ab9aa7a521e5,hsk1-017,电脑,"diànnǎo","computer",4
+e2bce4c5-7921-456e-a6a1-280153932ac8,hsk1-018,电视,"diànshì","television",4
+bcc60834-43cf-4569-b9fc-a3e2425a96dc,hsk1-019,电影,"diànyǐng","movie",4
+b35e7978-f2f3-4187-8f95-d99a0d0efedb,hsk1-020,东西,"dōngxi","thing; stuff",4
+f89b3317-57d4-4d77-bc32-ee81c3099080,hsk1-021,都,"dōu","all; both",5
+24a4ae25-d347-42da-9c65-46d054fe41f0,hsk1-022,读,"dú","to read aloud",4
+ca14f0f7-f75c-4347-b33d-6ae6f24c1bdd,hsk1-023,对不起,"duìbuqǐ","sorry",1
+d662d7a4-16d2-4b8d-8c75-80b261051c40,hsk1-024,多,"duō","many; much",5
+d9b495f5-96d9-44e8-a49d-89f4079abb03,hsk1-025,多少,"duōshao","how many; how much",5
+c0930956-e745-4dec-b966-a2d1828e1a87,hsk1-026,儿子,"érzi","son",2
+e6f0c586-b80b-4103-8d12-1ee6d51597dc,hsk1-027,二,"èr","two",1
+86f6ebdd-bce8-4017-b510-2a3585bde853,hsk1-028,饭店,"fàndiàn","restaurant; hotel",3
+880fa957-702a-4f47-b54c-52cd0f204c7e,hsk1-029,飞机,"fēijī","airplane",3
+f1ee4287-037b-4a51-bcf3-552993c3a1d5,hsk1-030,分钟,"fēnzhōng","minute",3
+9d4cb183-6772-42a1-a1aa-b30b70db38e0,hsk1-031,高兴,"gāoxìng","happy; glad",2
+3d83abb4-7225-4a9b-bd86-725ed9e46ffd,hsk1-032,个,"gè","general measure word",1
+f04d7ad1-a5e2-457a-a08d-664fbcc2b050,hsk1-033,工作,"gōngzuò","work; job",4
+b7284add-a0fc-48cd-88c7-ded91b798b77,hsk1-034,狗,"gǒu","dog",2
+cd8be07b-a2d7-4000-b66e-f6b9813b012a,hsk1-035,汉语,"Hànyǔ","Chinese (language)",2
+3a9e5fd4-97cf-4a17-87f6-6e4e86aaaaf8,hsk1-036,好,"hǎo","good",1
+d15ac4e9-3f74-42af-b24a-eb490cba605c,hsk1-037,号,"hào","number; day of the month",3
+47898a7b-4643-49a9-b972-2f1610cd7f96,hsk1-038,喝,"hē","to drink",2
+a4fddc39-5202-4329-98fc-e94d0a7c9cb8,hsk1-039,和,"hé","and",5
+9f3038ff-57ba-47d1-889c-b30bc2c35096,hsk1-040,很,"hěn","very",5
+cbbb71e7-4018-48fa-9205-2f47d0a7de79,hsk1-041,后面,"hòumiàn","behind; back",3
+c2791ddd-8385-4de4-8ec5-606de016dca8,hsk1-042,回,"huí","to return",4
+36065b5d-2778-4d20-878d-bcad1432fcee,hsk1-043,会,"huì","can; will; to know how to",5
+a86721bf-a868-40d1-9991-d0fcefb98de5,hsk1-044,几,"jǐ","how many (small numbers)",5
+9e8264fd-2cde-48bc-abb9-ab4d92fdf6d5,hsk1-045,家,"jiā","home; family",2
+2f660eea-74a3-4bf4-bc6e-245f6a495dfd,hsk1-046,叫,"jiào","to be called",2
+b6988a79-29a2-4ff7-a265-6fc60711d646,hsk1-047,今天,"jīntiān","today",3
+e5b5a20a-58e3-4e80-a806-bec4ae84d035,hsk1-048,九,"jiǔ","nine",1
+f751e088-e488-46b7-bbf4-c09751e7c28d,hsk1-049,开,"kāi","to open; to drive",4
+0478d2e5-f857-4a16-bd37-7273c1754403,hsk1-050,看,"kàn","to look; to watch; to read",4
+1108ac5c-93ce-4a86-8a55-9fab0b4e0f54,hsk1-051,看见,"kànjiàn","to see",4
+b22efd8c-a2fe-4103-a644-614cb3147974,hsk1-052,块,"kuài","yuan (spoken, money)",4
+2f464649-90ee-4692-bee5-6234e4d50eb3,hsk1-053,来,"lái","to come",4
+f910ecce-b975-4a62-a951-18aaf0fc6786,hsk1-054,老师,"lǎoshī","teacher",2
+4f9f56be-64b2-4875-a10d-5d4462a48b41,hsk1-055,了,"le","completed-action particle",5
+9ca95b19-42a5-4099-8455-139573ebb7fc,hsk1-056,冷,"lěng","cold",3
+9c874cf4-4900-4540-9bcf-41b43947142f,hsk1-057,里,"lǐ","inside",3
+8806dd1c-787a-44c0-a9aa-89a58228b8cf,hsk1-058,六,"liù","six",1
+802dbbf5-340b-48d7-ba15-f1a0ac93c1a0,hsk1-059,妈妈,"māma","mom",2
+ca17abe8-a4cf-4349-b3b3-a8cf3c37425e,hsk1-060,吗,"ma","question particle",5
+64c7bb0a-8268-40cb-bb53-e4bc6b71227e,hsk1-061,买,"mǎi","to buy",4
+d87fb68f-c063-4aab-afb0-4a15f8be4a32,hsk1-062,没关系,"méi guānxi","it doesn't matter",1
+3a344f7d-6bff-4e6d-b34d-32b0f3021ef9,hsk1-063,没有,"méiyǒu","to not have; there isn't",5
+73f509a9-7dce-4c4e-b8a6-656413a80dcd,hsk1-064,米饭,"mǐfàn","cooked rice",2
+4684fffd-ebd5-4d4f-acbd-ebda01d4f1d5,hsk1-065,名字,"míngzi","name",2
+3957a2c2-c029-4ea1-9cfb-5838f7eaa2fd,hsk1-066,明天,"míngtiān","tomorrow",3
+de12925c-6bc8-4154-85fe-3fd4aafaacdd,hsk1-067,哪,"nǎ","which",5
+0607b1f5-38f4-47b5-a1c7-542ab085bd1d,hsk1-068,哪儿,"nǎr","where",5
+26880f62-8aa1-4b62-8b28-dc1552b4422a,hsk1-069,那,"nà","that",5
+4c8bc58d-bf89-49df-82e2-958b3641da23,hsk1-070,呢,"ne","question particle (""and you?"")",5
+a1ef21d4-6899-4b24-b44d-dd847da933f3,hsk1-071,能,"néng","can; to be able to",5
+ecb9f0aa-b21f-42c0-8e6f-c575c1f2f27a,hsk1-072,你,"nǐ","you",1
+198b0833-abab-468c-8eb8-afcb7ccf5db1,hsk1-073,年,"nián","year",3
+4a694cc0-aad2-4c43-b080-34868537f3ff,hsk1-074,女儿,"nǚ'ér","daughter",2
+8f4cc251-22b2-49e6-80aa-f97f7a146ac4,hsk1-075,朋友,"péngyou","friend",2
+733c3b77-a15b-4e28-8795-857333c720de,hsk1-076,漂亮,"piàoliang","pretty; beautiful",2
+18c49649-5bd7-417c-803d-42ad7910e70e,hsk1-077,苹果,"píngguǒ","apple",2
+66698df6-f4e8-444e-8a40-b3dda8837f4b,hsk1-078,七,"qī","seven",1
+2aabfa90-2463-47b3-b4ab-d2f7370fd600,hsk1-079,前面,"qiánmiàn","front; ahead",3
+6254ed97-b2a5-4759-a84e-8b291f1fcd25,hsk1-080,钱,"qián","money",4
+b862e695-8dec-4d5f-b8af-e21c60c45f99,hsk1-081,请,"qǐng","please; to invite",1
+c7de70ee-a799-4ece-9151-c0c6d857460c,hsk1-082,去,"qù","to go",4
+d451e0d1-80f1-45e4-a773-3c9eff5d3715,hsk1-083,热,"rè","hot",3
+5990b68b-a4e7-47e8-a446-d850a7c2b25a,hsk1-084,人,"rén","person",1
+f7ca38f1-a345-41f2-ab93-c13f79ebf72c,hsk1-085,认识,"rènshi","to know (a person)",2
+26e545a9-4f3c-4932-b235-10615fae4307,hsk1-086,三,"sān","three",1
+5e0f71eb-e230-4f02-8cd4-0933253052ca,hsk1-087,商店,"shāngdiàn","shop; store",3
+4e2f401a-9e52-46ab-b898-d01fa7da9e8d,hsk1-088,上,"shàng","up; on; above",3
+e247112e-2ded-4f80-af88-ff9b2833f290,hsk1-089,上午,"shàngwǔ","morning",3
+732bcec0-c254-4664-8540-d01f61a1650e,hsk1-090,少,"shǎo","few; less",5
+aabe0a52-3e3d-4769-8ed2-b2eb63ecce45,hsk1-091,谁,"shéi","who",5
+f2527f43-c4b9-400e-9bdb-5c10bfae6fb7,hsk1-092,什么,"shénme","what",5
+432e8eb5-d069-4b5b-a5cf-2422cf6b36a9,hsk1-093,十,"shí","ten",1
+0caceb64-54eb-478d-b8ad-b0f077d53d56,hsk1-094,时候,"shíhou","time; moment",3
+48ec3622-0b6a-4837-b8e3-ef61df152074,hsk1-095,是,"shì","to be",1
+0be9952e-9da5-49f2-a909-7f0412446557,hsk1-096,书,"shū","book",4
+7f32de66-15c1-443f-a0e9-7d263f196cdd,hsk1-097,水,"shuǐ","water",2
+8c016885-68da-42a5-95d0-d35ae6672839,hsk1-098,水果,"shuǐguǒ","fruit",2
+39fbee05-a550-4e26-8b40-7d3a15871368,hsk1-099,睡觉,"shuìjiào","to sleep",4
+9c7a9c00-627c-47ab-a533-f23a0616af9b,hsk1-100,说,"shuō","to speak; to say",4
+fb2a12c3-d470-456f-b133-3ae6f902bb96,hsk1-101,四,"sì","four",1
+44c876a8-61f8-411f-a8b3-995c55bba399,hsk1-102,岁,"suì","years old",3
+57ffcb4d-3ad5-42a8-8287-ef857ab5f65b,hsk1-103,他,"tā","he; him",1
+faa65328-4606-4293-a155-0297ad274b90,hsk1-104,她,"tā","she; her",1
+a6ca08a0-730f-4a64-ba6c-52d516696565,hsk1-105,太,"tài","too; extremely",5
+f2417e8f-41ea-4077-944b-bce3798777ea,hsk1-106,天气,"tiānqì","weather",3
+2b7129f7-84d0-4e87-a4b2-12eee95161f9,hsk1-107,听,"tīng","to listen",4
+7d06e124-6256-483e-bc58-98dfc77ed8d2,hsk1-108,同学,"tóngxué","classmate",2
+07a25474-de4f-49ef-8f2d-05ce4076706f,hsk1-109,喂,"wèi","hello (on the phone)",1
+17f26f41-62b1-499d-b345-eb8a8a3bc25e,hsk1-110,我,"wǒ","I; me",1
+7b21ba5f-6972-443f-9542-501fc5cfb28e,hsk1-111,我们,"wǒmen","we; us",1
+6c9d27e4-13e1-470b-b100-35e06d547435,hsk1-112,五,"wǔ","five",1
+2a90a7bf-21cf-4771-abd8-866e80eb8fa8,hsk1-113,喜欢,"xǐhuan","to like",2
+a1699d20-b61f-404a-90de-7003c2898786,hsk1-114,下,"xià","down; below",3
+3eae74db-8edf-47c9-beec-d765a9cc4e58,hsk1-115,下午,"xiàwǔ","afternoon",3
+07831ff2-c560-4d27-9944-32ed3faf8eec,hsk1-116,下雨,"xiàyǔ","to rain",3
+bc3907c6-ae30-48b6-ba9a-f90cd149cba1,hsk1-117,先生,"xiānsheng","Mr.; sir",2
+ba7b680d-ce11-4027-853e-404a483400aa,hsk1-118,现在,"xiànzài","now",3
+4b5b2256-f9e8-443b-bdc3-952ed8df2bd7,hsk1-119,想,"xiǎng","to want; to think",4
+827f77ad-971f-4a39-b782-8ea5b9231948,hsk1-120,小,"xiǎo","small",1
+70b6b729-7208-4a59-bcd8-e465f42420b6,hsk1-121,小姐,"xiǎojiě","Miss; young lady",2
+c1616022-5492-413b-b055-944277d77c92,hsk1-122,些,"xiē","some; a few",5
+c1ae3558-d4b5-4429-8c8a-b6bd4b6554a0,hsk1-123,写,"xiě","to write",4
+58baefa3-35b7-42cf-be8a-e6996f36d06f,hsk1-124,谢谢,"xièxie","thank you",1
+c4b3a858-f9ab-410e-9645-84f0b3bd7c58,hsk1-125,星期,"xīngqī","week",3
+7715d062-e20b-428c-a329-185e3b0b26b4,hsk1-126,学生,"xuésheng","student",2
+ac21231c-cef2-4388-9fef-c43c46d57df3,hsk1-127,学习,"xuéxí","to study",4
+cec9d98c-0945-4250-a139-7815421eebf0,hsk1-128,学校,"xuéxiào","school",3
+4a4ece29-2ac0-45fc-ac7a-72a5761e65bc,hsk1-129,一,"yī","one",1
+3d5b655f-5345-4f8c-b3c9-9c21e7394932,hsk1-130,一点儿,"yìdiǎnr","a little",5
+0f7ce035-0817-496c-af71-269fba1cd134,hsk1-131,衣服,"yīfu","clothes",4
+14e51731-3a84-4ea0-a9bf-7b130f6060d8,hsk1-132,医生,"yīshēng","doctor",5
+b01ec3e7-a503-47ec-903a-800c478f7b93,hsk1-133,医院,"yīyuàn","hospital",3
+946779a5-db11-46d1-8ec1-3ec2ad718a1b,hsk1-134,椅子,"yǐzi","chair",4
+0b551885-55aa-4a18-a0d4-772536b09a67,hsk1-135,有,"yǒu","to have",5
+461fe9b6-25b7-48c3-9c6e-807b2a6336f9,hsk1-136,月,"yuè","month; moon",3
+3ffbaebc-290c-43d0-8a05-652594fc50fe,hsk1-137,再见,"zàijiàn","goodbye",1
+dc11371f-81c5-4f0a-9d4e-0d7bac826888,hsk1-138,在,"zài","at; in; on",5
+63b33230-dcfa-4e66-9b86-059e3759c469,hsk1-139,怎么,"zěnme","how",5
+eb3b1eba-5ad1-4af6-939f-92663c33b715,hsk1-140,怎么样,"zěnmeyàng","how about; how is",5
+dbe3a371-374a-4a9d-aef7-fb87e3ae6ea2,hsk1-141,这,"zhè","this",5
+a207f37e-b8f7-48db-a6b0-b82068b8f3d2,hsk1-142,中国,"Zhōngguó","China",2
+04cdb3da-bd3a-4164-bb8c-8d9681d6f3e3,hsk1-143,中午,"zhōngwǔ","noon",3
+3ed22222-8162-4f62-b1af-d9f990f86c9b,hsk1-144,住,"zhù","to live; to stay",4
+afdcbdb0-e586-4caf-90c6-10721ffaf305,hsk1-145,桌子,"zhuōzi","table",4
+c2677ed4-1837-435b-bcc7-1746c7e01107,hsk1-146,字,"zì","character; word",5
+f05a19a9-b6b8-473e-ade1-56b3925f1afe,hsk1-147,昨天,"zuótiān","yesterday",3
+5d1e988c-bac6-446c-873f-de94a844fc62,hsk1-148,坐,"zuò","to sit",4
+5ee3c19b-b948-49f0-80ef-781832fb233a,hsk1-149,做,"zuò","to do; to make",4
