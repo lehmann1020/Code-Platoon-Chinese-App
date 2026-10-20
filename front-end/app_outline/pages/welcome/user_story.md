@@ -3,25 +3,24 @@
 ## Wireframe
 ```
 +--------------------------------------------------+
-|                    Hanzi Match                   |
-|          Learn HSK 1 vocabulary by matching      |
+|                       [汉]                        |
+|                 Welcome, {name}                  |
+|   Learn HSK 1 vocabulary by matching characters  |
+|   to their pinyin. Hanzi Match saves your        |
+|   progress as you go.                            |
 |                                                  |
-|        +------------------------------+          |
-|        | Name   [____________________]|          |
-|        | Email  [____________________]|          |
-|        |        (error text if any)   |          |
-|        |        [   Start matching  ] |          |
-|        +------------------------------+          |
+|              [   Start matching   ]              |
+|                                                  |
+|               Not you? Log out                   |
 +--------------------------------------------------+
 ```
+(The original wireframe.png shows the pre-auth name + email form; name and email now come from Register.)
 
 ## User story
-As a learner, I enter my name and email so the app can greet me and I can start practising HSK 1 vocabulary.
+As a logged-in learner, I see who I'm logged in as and start (or resume) practising, or log out if this isn't me.
 
 ## Acceptance criteria
-- [ ] Name and email are both required; name must not be blank (trimmed), email must be a valid address
-- [ ] Errors appear after a failed submit or when a field loses focus; each field has `aria-invalid` and an error message
-- [ ] "Start matching" is disabled until both fields are valid
-- [ ] On submit the name and email are stored in memory only and the app goes to `/play`
-- [ ] Visiting `/play` directly (e.g. after a refresh) redirects here
-- [ ] Enter submits the form; the first field is focused on load
+- [ ] Only for logged-in users; a logged-out visitor is sent to `/login`
+- [ ] The heading shows the learner's name (from their `users` row)
+- [ ] "Start matching" (focused on load) loads the words and the learner's saved progress, then goes to `/play`; on failure it shows "Could not connect. Please try again."
+- [ ] "Log out" ends the session and goes to `/login` (this page has no header, so it has its own Log out)

@@ -71,6 +71,16 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .field input[aria-invalid='true'] { border-color: var(--wrong); }
 .error { color: var(--wrong); min-height: 1.3em; font-size: 0.875rem; }
 .card-form .btn { width: 100%; margin-top: 4px; }
+.hint { color: var(--muted); min-height: 1.3em; font-size: 0.875rem; }
+
+/* Auth (Log in / Register / Welcome) */
+.auth-switch { margin: 4px 0 0; color: var(--muted); }
+.auth-switch a, .link-btn { color: var(--select); font-weight: 500; }
+.link-btn { background: none; border: 0; padding: 0; font-size: inherit; text-decoration: underline; text-underline-offset: 2px; }
+.link-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.welcome-start { min-width: 220px; margin-top: 16px; }
+.topbar-end { display: flex; align-items: center; justify-content: flex-end; gap: 16px; }
+.btn-small { min-height: 36px; padding: 0 14px; font-size: 0.875rem; }
 
 /* Board */
 .board-page { max-width: 960px; margin: 0 auto; padding: 8px 24px 96px; }

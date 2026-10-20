@@ -1,11 +1,12 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { getProgress, getWords, resetProgress, startSession, updateUser } from '../lib/api.js'
+import { getProgress, getWords, resetProgress, startSession } from '../lib/api.js'
 import { makeRound, shuffle } from '../lib/rounds.js'
 import { AppStateContext } from './context.js'
 
-// All app state lives here; words and progress are loaded from Supabase on sign-in. A refresh clears it (back to Welcome).
+// The logged-in user's game. RequireAuth mounts one per user (keyed by id), so switching accounts starts clean.
+// Words and that user's progress are loaded from Supabase by loadGame (Welcome's Start button, or /play after a refresh).
 export function AppStateProvider({ children }) {
-  const [user, setUser] = useState(null)              // { name, email } once signed in
+  const [ready, setReady] = useState(false)           // true once loadGame has finished
   const [words, setWords] = useState([])              // all HSK 1 words from the database, shuffled once per session
   const [matched, setMatched] = useState(() => new Set())   // ids of matched words
   const [round, setRound] = useState(null)            // { ids, left, right } — the 6 words on screen + column orders
@@ -28,10 +29,8 @@ export function AppStateProvider({ children }) {
     deal(latest.current.words, new Set())
   }, [deal])
 
-  // Save the typed details, load words and progress, make sure a session is open, then start playing.
-  // Throws if anything fails (Welcome shows the error).
-  const signIn = useCallback(async (nextUser) => {
-    await updateUser({ name: nextUser.name, email: nextUser.email })
+  // Load words and the user's progress, make sure a session is open, then deal. Throws if anything fails.
+  const loadGame = useCallback(async () => {
     const all = await getWords()
     let done = new Set(await getProgress())
     if (all.length > 0 && done.size >= all.length) {   // already finished: start a fresh game so the player isn't stuck
@@ -41,7 +40,7 @@ export function AppStateProvider({ children }) {
       await startSession()
     }
     deal(all, done)
-    setUser(nextUser)
+    setReady(true)
   }, [deal])
 
   // Deal the next set of unmatched words.
@@ -53,8 +52,8 @@ export function AppStateProvider({ children }) {
   const getWord = useCallback((id) => words.find((w) => w.id === id), [words])
 
   const value = useMemo(
-    () => ({ user, signIn, restart, nextRound, words, matched, setMatched, round, total: words.length, getWord }),
-    [user, signIn, restart, nextRound, words, matched, round, getWord],
+    () => ({ ready, loadGame, restart, nextRound, words, matched, setMatched, round, total: words.length, getWord }),
+    [ready, loadGame, restart, nextRound, words, matched, round, getWord],
   )
   return <AppStateContext.Provider value={value}>{children}</AppStateContext.Provider>
 }

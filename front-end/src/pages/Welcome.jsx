@@ -2,86 +2,50 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { APP_NAME } from '../config/app.js'
 import { useAppState } from '../state/useAppState.js'
+import { useAuth } from '../state/useAuth.js'
 
-const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
-
-// Pure validation: returns an error message per invalid field.
-function validate({ name, email }) {
-  const errors = {}
-  if (!name.trim()) errors.name = 'Please enter your name.'
-  if (!email.trim()) errors.email = 'Please enter your email.'
-  else if (!EMAIL.test(email.trim())) errors.email = 'Enter a valid email, like name@example.com.'
-  return errors
-}
-
+// Shown after logging in, before the game (and its header). Start loads the user's saved progress.
 export default function Welcome() {
-  const { signIn } = useAppState()
+  const { displayName, signOut } = useAuth()
+  const { loadGame } = useAppState()
   const navigate = useNavigate()
-  const [values, setValues] = useState({ name: '', email: '' })
-  const [touched, setTouched] = useState({})
-  const [submitting, setSubmitting] = useState(false)
+  const [busy, setBusy] = useState('')        // '' | 'start' | 'logout'
   const [formError, setFormError] = useState('')
 
-  const errors = validate(values)
-  const valid = Object.keys(errors).length === 0
-  const shown = (field) => touched[field] && errors[field]
-
-  const set = (field) => (e) => setValues((v) => ({ ...v, [field]: e.target.value }))
-  const blur = (field) => () => setTouched((t) => ({ ...t, [field]: true }))
-
-  async function submit(e) {
-    e.preventDefault()
-    setTouched({ name: true, email: true })
-    if (!valid || submitting) return
-    setSubmitting(true)
+  async function start() {
+    setBusy('start')
     setFormError('')
     try {
-      await signIn({ name: values.name.trim(), email: values.email.trim() })   // saves details, loads words + progress
+      await loadGame()
       navigate('/play')
     } catch {
       setFormError('Could not connect. Please try again.')
-      setSubmitting(false)
+      setBusy('')
+    }
+  }
+
+  // RequireAuth sends us to Log in once the user is gone.
+  async function logOut() {
+    setBusy('logout')
+    setFormError('')
+    try {
+      await signOut()
+    } catch {
+      setFormError('You were not logged out. Please try again.')
+      setBusy('')
     }
   }
 
   return (
     <main className="welcome">
       <span className="seal" aria-hidden="true">汉</span>
-      <h1>{APP_NAME}</h1>
-      <p className="welcome-sub">Learn HSK 1 vocabulary by matching characters to their pinyin.</p>
-
-      <form className="card-form" onSubmit={submit} noValidate>
-        <div className="field">
-          <label htmlFor="name">Name</label>
-          <input
-            id="name"
-            autoFocus
-            autoComplete="name"
-            value={values.name}
-            onChange={set('name')}
-            onBlur={blur('name')}
-            aria-invalid={!!shown('name')}
-            aria-describedby="err-name"
-          />
-          <small id="err-name" className="error" role={shown('name') ? 'alert' : undefined}>{shown('name') || ''}</small>
-        </div>
-        <div className="field">
-          <label htmlFor="email">Email</label>
-          <input
-            id="email"
-            type="email"
-            autoComplete="email"
-            value={values.email}
-            onChange={set('email')}
-            onBlur={blur('email')}
-            aria-invalid={!!shown('email')}
-            aria-describedby="err-email"
-          />
-          <small id="err-email" className="error" role={shown('email') ? 'alert' : undefined}>{shown('email') || ''}</small>
-        </div>
-        <button type="submit" className="btn btn-primary" disabled={!valid || submitting}>Start matching</button>
-        <small className="error" role={formError ? 'alert' : undefined}>{formError}</small>
-      </form>
+      <h1>Welcome, {displayName}</h1>
+      <p className="welcome-sub">Learn HSK 1 vocabulary by matching characters to their pinyin. {APP_NAME} saves your progress as you go.</p>
+      <button type="button" className="btn btn-primary welcome-start" autoFocus onClick={start} disabled={!!busy}>
+        {busy === 'start' ? 'Loading…' : 'Start matching'}
+      </button>
+      <small className="error" role={formError ? 'alert' : undefined}>{formError}</small>
+      <p className="auth-switch">Not you? <button type="button" className="link-btn" onClick={logOut} disabled={!!busy}>Log out</button></p>
     </main>
   )
 }
